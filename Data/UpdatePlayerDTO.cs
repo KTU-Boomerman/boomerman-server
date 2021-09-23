@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace BoomermanServer.Hubs
+namespace BoomermanServer.Data
 {
-    public class Player 
+    public class UpdatePlayerDTO 
     {
       [JsonProperty("id")]
       public int ID { get; set; }

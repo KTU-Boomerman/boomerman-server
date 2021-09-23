@@ -1,16 +1,12 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using BoomermanServer.Data;
 
 namespace BoomermanServer.Hubs
 {
     public class GameHub : Hub
     {
-        public async Task SendMessage(string user, string message)
-        {
-            // await Clients.All.SendAsync("ReceiveMessage", user, message);
-        }
-
-        public async Task UpdatePlayer(Player player)
+        public async Task UpdatePlayer(UpdatePlayerDTO player)
         {
             await Clients.Others.SendAsync("UpdateEnemy", player);
         }
