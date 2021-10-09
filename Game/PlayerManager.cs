@@ -29,6 +29,11 @@ namespace BoomermanServer.Game
 			return player;
 		}
 
+		public Player GetPlayer(string id)
+		{
+			return _players[id];
+		}
+
 		public void RemovePlayer(string id)
 		{
 			_players.Remove(id);

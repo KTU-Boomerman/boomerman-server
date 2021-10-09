@@ -4,6 +4,7 @@ using BoomermanServer.Data;
 using BoomermanServer.Game;
 using System;
 using System.Linq;
+using System.Diagnostics;
 
 namespace BoomermanServer.Hubs
 {
@@ -20,7 +21,8 @@ namespace BoomermanServer.Hubs
     * BombExplode - explosion in tiles and removed walls
     * PowerupPickup
     * GameEnd - game ended, players can't move, winner is shown
-    */
+	* GameStateChange 
+	*/
 	public class GameHub : Hub
 	{
 		private readonly IGameManager _gameManager;
@@ -37,12 +39,18 @@ namespace BoomermanServer.Hubs
 			var playerDto = _playerManager.AddPlayer(Context.ConnectionId).ToDTO();
 			await Clients.Others.SendAsync("PlayerJoin", playerDto);
 
-			var playersDto = _playerManager.GetPlayers().Select(p => p.ToDTO());
+			var playersDto = _playerManager
+				.GetPlayers()
+				.Where(p => p.ID != Context.ConnectionId)
+				.Select(p => p.ToDTO())
+				.ToArray();
+
 			await Clients.Caller.SendAsync("Joined", playerDto, playersDto);
 
 			if (_playerManager.GetPlayerCount() >= _gameManager.GetMinPlayers())
 			{
 				_gameManager.StartGame();
+				// TODO: refactor to on game state change - one event for all game states
 				await Clients.All.SendAsync("GameStart");
 			}
 		}
@@ -59,14 +67,17 @@ namespace BoomermanServer.Hubs
 		}
 
 		// TODO: calculate and validate positon on backend
-		public async Task<bool> PlayerMove(PositionDTO position)
+		public async Task<PositionValidationDTO> PlayerMove(PositionDTO position)
 		{
-			if (_gameManager.GameState != GameState.GameInProgress)
-				return false;
+			if (_gameManager.GameState != GameState.GameInProgress) {
+				var originalPostion = _playerManager.GetPlayer(Context.ConnectionId).Position;
+				var positionDto = new PositionDTO { X = originalPostion.X, Y = originalPostion.Y };
+				return new PositionValidationDTO { IsValid = false, Position = positionDto };
+			}
 
 			_playerManager.MovePlayer(Context.ConnectionId, new Position(position));
 			await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, position);
-			return true;
+			return new PositionValidationDTO { IsValid = true };
 		}
 	}
 }
