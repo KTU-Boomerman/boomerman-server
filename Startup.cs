@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BoomermanServer.Hubs;
+using BoomermanServer.Game;
 
 namespace BoomermanServer
 {
@@ -17,6 +18,9 @@ namespace BoomermanServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IGameManager, GameManager>();
+            services.AddSingleton<IPlayerManager, PlayerManager>();
+            
             services.AddCors();
             services.AddSignalR();
         }
