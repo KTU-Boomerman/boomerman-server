@@ -13,15 +13,13 @@ namespace BoomermanServer.Hubs
     * It is responsible for creating the game, updating the game, and sending the game to the clients.
     * 
     * Events:
-    * -GameStart - game started, players can move
+	* GameStateChange 
     * -PlayerJoin - player joined, hes assigned an id
     * -PlayerLeave
     * -PlayerMove
     * PlayerPlaceBomb
     * BombExplode - explosion in tiles and removed walls
     * PowerupPickup
-    * GameEnd - game ended, players can't move, winner is shown
-	* GameStateChange 
 	*/
 	public class GameHub : Hub
 	{
@@ -45,13 +43,17 @@ namespace BoomermanServer.Hubs
 				.Select(p => p.ToDTO())
 				.ToArray();
 
-			await Clients.Caller.SendAsync("Joined", playerDto, playersDto);
+			var gameStateDto = new GameStateDTO
+			{
+				GameState = _gameManager.GameState.ToString(),
+			};	
+
+			await Clients.Caller.SendAsync("Joined", playerDto, playersDto, gameStateDto);
 
 			if (_playerManager.GetPlayerCount() >= _gameManager.GetMinPlayers())
 			{
 				_gameManager.StartGame();
-				// TODO: refactor to on game state change - one event for all game states
-				await Clients.All.SendAsync("GameStart");
+				await ChangeGameState();
 			}
 		}
 
@@ -78,6 +80,15 @@ namespace BoomermanServer.Hubs
 			_playerManager.MovePlayer(Context.ConnectionId, new Position(position));
 			await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, position);
 			return new PositionValidationDTO { IsValid = true };
+		}
+
+		private async Task ChangeGameState()
+		{
+			var gameStateDto = new GameStateDTO
+			{
+				GameState = _gameManager.GameState.ToString(),
+			};
+			await Clients.All.SendAsync("GameStateChange", gameStateDto);
 		}
 	}
 }
