@@ -17,7 +17,7 @@ namespace BoomermanServer.Game
 
 		public int GetMinPlayers()
 		{
-			return 2;
+			return 1;
 		}
 
 		public void StartGame()
