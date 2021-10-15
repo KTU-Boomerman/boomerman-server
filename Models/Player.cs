@@ -7,7 +7,6 @@ namespace BoomermanServer.Game
 		private string _id;
 		private Position _position;
 
-
 		public Player(string id, Position position)
 		{
 			_id = id;
@@ -33,6 +32,5 @@ namespace BoomermanServer.Game
 				Position = _position.ToDTO()
 			};
 		}
-
 	}
 }
