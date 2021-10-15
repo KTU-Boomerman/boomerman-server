@@ -100,7 +100,7 @@ namespace BoomermanServer.Hubs
             var position = new Position(positionDTO);
             var bomb = new RegularBomb(position); // TODO: Add logic to see what type of bomb to create
             await Clients.All.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
-            _pendingExplosions.Enqueue(new Explosion(bomb));
+            _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
     }
 }
