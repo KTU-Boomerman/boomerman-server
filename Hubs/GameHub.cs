@@ -4,7 +4,6 @@ using BoomermanServer.Data;
 using BoomermanServer.Game;
 using System;
 using System.Linq;
-using System.Diagnostics;
 
 namespace BoomermanServer.Hubs
 {
