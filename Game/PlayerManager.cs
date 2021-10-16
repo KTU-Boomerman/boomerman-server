@@ -20,12 +20,14 @@ namespace BoomermanServer.Game
 
         public Player AddPlayer(string id)
         {
-            Position spawnPoint = getRandomSpawnPoint();
-            Player player = new Player(id, spawnPoint);
+            lock(_players) {
+                Position spawnPoint = getRandomSpawnPoint();
+                Player player = new Player(id, spawnPoint);
 
-            _players.Add(id, player);
-
-            return player;
+                _players.Add(id, player);
+            
+                return player;
+            }
         }
 
         public Player GetPlayer(string id)
@@ -35,7 +37,9 @@ namespace BoomermanServer.Game
 
         public void RemovePlayer(string id)
         {
-            _players.Remove(id);
+            lock(_players) {
+                _players.Remove(id);
+            }
         }
 
         public void MovePlayer(string id, Position position)
