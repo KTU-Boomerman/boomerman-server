@@ -1,22 +1,22 @@
-
 using BoomermanServer.Game;
 using BoomermanServer.Models.Bombs;
 
 namespace BoomermanServer.Patterns.Builders
 {
-    public class RegularBombBuilder : BombBuilder
+    public class BoomerangBombBuilder : BombBuilder
     {
-        public RegularBombBuilder()
+        public BoomerangBombBuilder()
         {
-            Bomb = new RegularBomb();
+            Bomb = new BoomerangBomb();
         }
 
-        public override BombBuilder SetPosition(Position position)
+        public override BoomerangBombBuilder SetPosition(Position position)
         {
             Bomb.SetPosition(position);
             return this;
         }
 
         public override Bomb GetBomb() => Bomb;
+
     }
 }

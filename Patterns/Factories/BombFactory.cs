@@ -15,18 +15,19 @@ namespace BoomermanServer.Patterns.Factories
             {
                 case BombType.Wave:
                     _bombBuilder = new WaveBombBuilder();
-                    _bombBuilder.SetPosition(position).GetBomb();
+                    bomb = _bombBuilder.SetPosition(position).GetBomb();
                     break;
                 case BombType.Pulse:
                     _bombBuilder = new PulseBombBuilder();
-                    _bombBuilder.SetPosition(position).GetBomb();
+                    bomb = _bombBuilder.SetPosition(position).GetBomb();
                     break;
                 case BombType.Boomerang:
-                    bomb = new BoomerangBomb(position);
+                    _bombBuilder = new BoomerangBombBuilder();
+                    bomb = _bombBuilder.SetPosition(position).GetBomb();
                     break;
                 default:
                     _bombBuilder = new RegularBombBuilder();
-                    _bombBuilder.SetPosition(position).GetBomb();
+                    bomb = _bombBuilder.SetPosition(position).GetBomb();
                     break;
             }
             return bomb;
