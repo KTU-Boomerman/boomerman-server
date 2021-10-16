@@ -8,6 +8,8 @@ namespace BoomermanServer.Models.Powerups.Health
         protected int _healthAmount;
         protected Position _position;
 
+        public abstract HealthPowerup Clone();
+
         public HealthPowerup(Position position, int healthAmount)
         {
             _position = position;
