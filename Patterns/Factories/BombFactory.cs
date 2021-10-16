@@ -1,27 +1,32 @@
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models.Bombs;
+using BoomermanServer.Patterns.Builders;
 
 namespace BoomermanServer.Patterns.Factories
 {
     public class BombFactory
     {
+        private BombBuilder _bombBuilder;
         public Bomb CreateBomb(BombType bombType, Position position)
         {
             Bomb bomb = null;
             switch (bombType)
             {
                 case BombType.Wave:
-                    bomb = new WaveBomb(position);
+                    _bombBuilder = new WaveBombBuilder();
+                    _bombBuilder.SetPosition(position).GetBomb();
                     break;
                 case BombType.Pulse:
-                    bomb = new PulseBomb(position);
+                    _bombBuilder = new PulseBombBuilder();
+                    _bombBuilder.SetPosition(position).GetBomb();
                     break;
                 case BombType.Boomerang:
                     bomb = new BoomerangBomb(position);
                     break;
                 default:
-                    bomb = new RegularBomb(position);
+                    _bombBuilder = new RegularBombBuilder();
+                    _bombBuilder.SetPosition(position).GetBomb();
                     break;
             }
             return bomb;

@@ -1,13 +1,12 @@
 using System;
-using BoomermanServer.Game;
 using BoomermanServer.Data;
+using BoomermanServer.Game;
 
 namespace BoomermanServer.Models.Bombs
 {
     public class WaveBomb : Bomb
     {
-        public WaveBomb(Position position)
-            : base(position)
+        public WaveBomb()
         {
             _bombType = BombType.Wave;
         }
@@ -15,6 +14,11 @@ namespace BoomermanServer.Models.Bombs
         public override void Explode()
         {
             Console.WriteLine("Wave explosion"); // TODO: Add actual explosion logic
+        }
+
+        public override void SetPosition(Position position)
+        {
+            _position = position;
         }
     }
 }

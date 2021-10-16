@@ -1,13 +1,12 @@
 using System;
-using BoomermanServer.Game;
 using BoomermanServer.Data;
+using BoomermanServer.Game;
 
 namespace BoomermanServer.Models.Bombs
 {
     public class RegularBomb : Bomb
     {
-        public RegularBomb(Position position)
-            : base(position)
+        public RegularBomb()
         {
             _bombType = BombType.Regular;
         }
@@ -15,6 +14,11 @@ namespace BoomermanServer.Models.Bombs
         public override void Explode()
         {
             Console.WriteLine("Regular explosion"); // TODO: Add actual explosion logic
+        }
+
+        public override void SetPosition(Position position)
+        {
+            _position = position;
         }
     }
 }
