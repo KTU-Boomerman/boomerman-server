@@ -8,12 +8,15 @@ namespace BoomermanServer.Game
         private Position _position;
         public double Speed { get; set; }
         public int Health { get; set; }
+        public int MaxBombCount { get; set; }
 
         public Player(string id, Position position)
         {
             _id = id;
             _position = position;
             Speed = 1.0;
+            Health = 100;
+            MaxBombCount = 1;
         }
 
         public string ID

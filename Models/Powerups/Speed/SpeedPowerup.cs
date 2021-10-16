@@ -8,8 +8,6 @@ namespace BoomermanServer.Models.Powerups.Speed
         protected double _speedPercentage;
         protected Position _position;
 
-        public abstract SpeedPowerup Clone();
-
         public SpeedPowerup(Position position, double speedPercentage)
         {
             _position = position;
