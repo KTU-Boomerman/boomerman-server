@@ -1,5 +1,5 @@
-using BoomermanServer.Game;
 using BoomermanServer.Data;
+using BoomermanServer.Game;
 
 namespace BoomermanServer.Models.Bombs
 {
@@ -8,6 +8,8 @@ namespace BoomermanServer.Models.Bombs
         protected Position _position;
         protected BombType _bombType;
         public abstract void Explode(); // KABOOM
+        public abstract void SetPosition(Position position);
+
 
         public BombDTO ToDTO()
         {
@@ -16,11 +18,6 @@ namespace BoomermanServer.Models.Bombs
                 Position = _position.ToDTO(),
                 BombType = _bombType
             };
-        }
-
-        public Bomb(Position position)
-        {
-            _position = position;
         }
     }
 }

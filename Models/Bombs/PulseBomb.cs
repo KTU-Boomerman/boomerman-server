@@ -1,20 +1,25 @@
 using System;
-using BoomermanServer.Game;
 using BoomermanServer.Data;
+using BoomermanServer.Game;
 
 namespace BoomermanServer.Models.Bombs
 {
     public class PulseBomb : Bomb
     {
-        public PulseBomb(Position position)
-            : base(position)
+        public PulseBomb()
         {
             _bombType = BombType.Pulse;
+        }
+        public override void SetPosition(Position position)
+        {
+            _position = position;
         }
 
         public override void Explode()
         {
             Console.WriteLine("Pulse explosion");
         }
+
+
     }
 }
