@@ -1,19 +1,19 @@
+using BoomermanServer.Game;
 using BoomermanServer.Models.Powerups.Health;
 using BoomermanServer.Models.Powerups.Speed;
-using BoomermanServer.Game;
 
-namespace BoomermanServer.Factories
+namespace BoomermanServer.Patterns.Factories
 {
-    public class BigPowerupFactory : PowerupFactory
+    public class SmallPowerupFactory : PowerupFactory
     {
         public override HealthPowerup CreateHealthPowerup(Position position)
         {
-            return new BigHealthPowerup(position);
+            return new SmallHealthPowerup(position);
         }
 
         public override SpeedPowerup CreateSpeedPowerup(Position position)
         {
-            return new BigSpeedPowerup(position);
+            return new SmallSpeedPowerup(position);
         }
     }
 }
