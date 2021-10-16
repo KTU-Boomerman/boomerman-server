@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Timers;
+using BoomermanServer.Models.Bombs;
 
 namespace BoomermanServer.Models
 {

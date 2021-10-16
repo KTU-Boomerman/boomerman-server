@@ -1,7 +1,7 @@
 using BoomermanServer.Game;
 using BoomermanServer.Data;
 
-namespace BoomermanServer.Models
+namespace BoomermanServer.Models.Bombs
 {
     public abstract class Bomb : IDataTransferable<BombDTO>
     {

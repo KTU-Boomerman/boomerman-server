@@ -2,7 +2,7 @@ using System;
 using BoomermanServer.Game;
 using BoomermanServer.Data;
 
-namespace BoomermanServer.Models
+namespace BoomermanServer.Models.Bombs
 {
     public class RegularBomb : Bomb
     {

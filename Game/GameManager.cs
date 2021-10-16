@@ -7,7 +7,7 @@ namespace BoomermanServer.Game
 
         public GameManager()
         {
-            _gameState = GameState.PlayersJoining;
+            _gameState = GameState.GameInProgress;
         }
 
         public int GetMinPlayers()

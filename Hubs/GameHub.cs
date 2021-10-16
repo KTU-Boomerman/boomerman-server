@@ -6,6 +6,7 @@ using BoomermanServer.Models;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using BoomermanServer.Factories;
 
 namespace BoomermanServer.Hubs
 {
@@ -98,19 +99,8 @@ namespace BoomermanServer.Hubs
         public async Task PlaceBomb(BombDTO bombDTO)
         {
             var player = _playerManager.GetPlayer(Context.ConnectionId);
-            Bomb bomb = null;
-            switch (bombDTO.BombType)
-            {
-                case BombType.Wave:
-                    bomb = new WaveBomb(player.Position);
-                    break;
-                case BombType.Pulse:
-                    bomb = new PulseBomb(player.Position);
-                    break;
-                default:
-                    bomb = new RegularBomb(player.Position);
-                    break;
-            }
+            var bombFactory = new BombFactory();
+            var bomb = bombFactory.CreateBomb(bombDTO.BombType, player.Position);
             await Clients.All.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
             _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
