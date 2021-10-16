@@ -1,8 +1,10 @@
+using BoomermanServer.Game;
+
 namespace BoomermanServer.Models.Powerups.Speed
 {
     public class BigSpeedPowerup : SpeedPowerup
     {
-        public BigSpeedPowerup()
-            : base(1.4) { }
+        public BigSpeedPowerup(Position position)
+            : base(position, 1.4) { }
     }
 }
