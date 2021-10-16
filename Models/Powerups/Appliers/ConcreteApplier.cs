@@ -6,7 +6,7 @@ namespace BoomermanServer.Models.Powerups.Appliers
     {
         public override void ApplyPowerup(Player player)
         {
-            _powerup.ApplyPowerup(player);
+            Powerup.ApplyPowerup(player);
         }
     }
 }

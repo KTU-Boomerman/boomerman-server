@@ -8,6 +8,7 @@ using boomerman_server.Patterns;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models;
+using BoomermanServer.Models.Powerups.Appliers;
 using BoomermanServer.Patterns.Factories;
 using Microsoft.AspNetCore.SignalR;
 
@@ -112,7 +113,7 @@ namespace BoomermanServer.Hubs
         {
             WallBuilder wallBuilder = new();
             wallBuilder.SetWallType(wallDTO.IsDestructible);
-            await Clients.All.SendAsync("...", wallBuilder.GetWall().ToDTO());
+            await Clients.All.SendAsync("CreateWall", wallBuilder.GetWall().ToDTO());
         }
     }
 }
