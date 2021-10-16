@@ -7,7 +7,7 @@ namespace BoomermanServer.Models.Powerups.Health
         public SmallHealthPowerup(Position position)
             : base(position, 20) { }
 
-        public override HealthPowerup Clone()
+        public override Powerup Clone()
         {
             return MemberwiseClone() as SmallHealthPowerup;
         }
