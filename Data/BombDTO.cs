@@ -6,5 +6,8 @@ namespace BoomermanServer.Data
     {
         [JsonProperty("position")]
         public PositionDTO Position { get; set; }
+
+        [JsonProperty("bombType")]
+        public BombType BombType { get; set; }
     }
 }

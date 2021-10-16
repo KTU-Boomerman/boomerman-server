@@ -95,10 +95,22 @@ namespace BoomermanServer.Hubs
             await Clients.All.SendAsync("GameStateChange", gameStateDto);
         }
 
-        public async Task PlaceBomb(PositionDTO positionDTO)
+        public async Task PlaceBomb(BombDTO bombDTO)
         {
-            var position = new Position(positionDTO);
-            var bomb = new RegularBomb(position); // TODO: Add logic to see what type of bomb to create
+            var player = _playerManager.GetPlayer(Context.ConnectionId);
+            Bomb bomb = null;
+            switch (bombDTO.BombType)
+            {
+                case BombType.Wave:
+                    bomb = new WaveBomb(player.Position);
+                    break;
+                case BombType.Pulse:
+                    bomb = new PulseBomb(player.Position);
+                    break;
+                default:
+                    bomb = new RegularBomb(player.Position);
+                    break;
+            }
             await Clients.All.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
             _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
