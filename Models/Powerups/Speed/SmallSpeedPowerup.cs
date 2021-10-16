@@ -6,5 +6,10 @@ namespace BoomermanServer.Models.Powerups.Speed
     {
         public SmallSpeedPowerup(Position position)
             : base(position, 1.2) { }
+
+        public override SpeedPowerup Clone()
+        {
+            return MemberwiseClone() as SmallSpeedPowerup;
+        }
     }
 }
