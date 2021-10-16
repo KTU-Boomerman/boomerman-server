@@ -2,12 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using boomerman_server.Data;
-using boomerman_server.Models.Walls;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models;
-using BoomermanServer.Models.Powerups.Appliers;
 using BoomermanServer.Patterns.Factories;
 using Microsoft.AspNetCore.SignalR;
 
@@ -99,12 +96,12 @@ namespace BoomermanServer.Hubs
             await Clients.All.SendAsync("GameStateChange", gameStateDto);
         }
 
-        public async Task PlaceBomb(BombDTO bombDTO)
+        public async Task PlaceBomb(CreateBombDTO bombDTO)
         {
             var player = _playerManager.GetPlayer(Context.ConnectionId);
             var bombFactory = new BombFactory();
             var bomb = bombFactory.CreateBomb(bombDTO.BombType, player.Position);
-            await Clients.All.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
+            await Clients.Others.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
             _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
     }
