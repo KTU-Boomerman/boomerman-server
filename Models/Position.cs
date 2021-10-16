@@ -1,35 +1,31 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BoomermanServer.Data;
 
 namespace BoomermanServer.Game
 {
-	public class Position : IDataTransferable<PositionDTO>
-	{
-		public Position(double x, double y)
-		{
-			X = x;
-			Y = y;
-		}
+    public class Position : IDataTransferable<PositionDTO>
+    {
+        public Position(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
 
-		public Position(PositionDTO dto)
-		{
-			X = dto.X;
-			Y = dto.Y;
-		}
+        public Position(PositionDTO dto)
+        {
+            X = dto.X;
+            Y = dto.Y;
+        }
 
-		public double X { get; set; }
-		public double Y { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
 
-		public PositionDTO ToDTO()
-		{
-			return new PositionDTO()
-			{
-				X = X,
-				Y = Y
-			};
-		}
-	}
+        public PositionDTO ToDTO()
+        {
+            return new PositionDTO()
+            {
+                X = X,
+                Y = Y
+            };
+        }
+    }
 }

@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace BoomermanServer.Data
 {
-	public class PositionDTO
-	{
-		[JsonProperty("x")]
-		public double X { get; set; }
-		[JsonProperty("y")]
-		public double Y { get; set; }
-	}
+    public class PositionDTO
+    {
+        [JsonProperty("x")]
+        public double X { get; set; }
+        [JsonProperty("y")]
+        public double Y { get; set; }
+    }
 }
