@@ -4,6 +4,7 @@ namespace BoomermanServer.Data
     {
         Regular,
         Wave,
-        Pulse
+        Pulse,
+        Boomerang
     }
 }

@@ -17,6 +17,9 @@ namespace BoomermanServer.Patterns.Factories
                 case BombType.Pulse:
                     bomb = new PulseBomb(position);
                     break;
+                case BombType.Boomerang:
+                    bomb = new BoomerangBomb(position);
+                    break;
                 default:
                     bomb = new RegularBomb(position);
                     break;

@@ -14,7 +14,7 @@ namespace BoomermanServer.Models.Bombs
 
         public override void Explode()
         {
-            Console.WriteLine("Wave explosion");
+            Console.WriteLine("Wave explosion"); // TODO: Add actual explosion logic
         }
     }
 }
