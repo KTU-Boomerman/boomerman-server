@@ -1,12 +1,15 @@
-using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using boomerman_server.Data;
+using boomerman_server.Models.Walls;
+using boomerman_server.Patterns;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using BoomermanServer.Factories;
+using BoomermanServer.Patterns.Factories;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BoomermanServer.Hubs
 {
@@ -103,6 +106,13 @@ namespace BoomermanServer.Hubs
             var bomb = bombFactory.CreateBomb(bombDTO.BombType, player.Position);
             await Clients.All.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
             _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
+        }
+
+        public async Task CreateWall(WallDTO wallDTO)
+        {
+            WallBuilder wallBuilder = new();
+            wallBuilder.SetWallType(wallDTO.IsDestructible);
+            await Clients.All.SendAsync("...", wallBuilder.GetWall().ToDTO());
         }
     }
 }

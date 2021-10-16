@@ -8,5 +8,6 @@ namespace BoomermanServer.Data
         public string ID { get; set; }
         [JsonProperty("position")]
         public PositionDTO Position { get; set; }
+        
     }
 }

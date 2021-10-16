@@ -1,8 +1,8 @@
-using BoomermanServer.Models.Bombs;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
+using BoomermanServer.Models.Bombs;
 
-namespace BoomermanServer.Factories
+namespace BoomermanServer.Patterns.Factories
 {
     public class BombFactory
     {
