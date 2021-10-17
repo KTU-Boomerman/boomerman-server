@@ -20,8 +20,13 @@ namespace BoomermanServer.Models
 
         public void Explode(object sender, ElapsedEventArgs args)
         {
-            _bomb.Explode();
-            _pendingExplosions.Dequeue();
+            if (_pendingExplosions.Count > 0)
+            {
+                _timer.Stop();
+                _bomb.Explode();
+                _pendingExplosions.Dequeue();
+            }
+
         }
 
         private void SetupTimer()
