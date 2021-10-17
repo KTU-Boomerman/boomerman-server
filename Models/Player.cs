@@ -9,6 +9,7 @@ namespace BoomermanServer.Game
         public double Speed { get; set; }
         public int Health { get; set; }
         public int MaxBombCount { get; set; }
+        public bool IsImmortal { get; set; }
 
         public Player(string id, Position position)
         {
