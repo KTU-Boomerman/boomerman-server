@@ -19,6 +19,11 @@ namespace BoomermanServer.Models.Powerups.Speed
             player.Speed *= _speedPercentage;
         }
 
+        public override void RemovePowerup(Player player)
+        {
+            player.Speed /= _speedPercentage;
+        }
+
         public SpeedPowerupDTO ToDTO()
         {
             return new SpeedPowerupDTO()

@@ -19,6 +19,11 @@ namespace BoomermanServer.Models.Powerups.BombCount
             player.MaxBombCount += _bombCountToAdd;
         }
 
+        public override void RemovePowerup(Player player)
+        {
+            player.MaxBombCount -= _bombCountToAdd;
+        }
+
         public BombCountPowerupDTO ToDTO()
         {
             return new BombCountPowerupDTO()

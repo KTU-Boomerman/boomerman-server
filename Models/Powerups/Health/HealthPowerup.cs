@@ -19,6 +19,11 @@ namespace BoomermanServer.Models.Powerups.Health
             player.Health += _healthAmount;
         }
 
+        public override void RemovePowerup(Player player)
+        {
+            player.Health -= _healthAmount;
+        }
+
         public HealthPowerupDTO ToDTO()
         {
             return new HealthPowerupDTO()
