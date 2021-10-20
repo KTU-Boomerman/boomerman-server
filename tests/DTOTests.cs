@@ -2,6 +2,9 @@ using boomerman_server.Models.Walls;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models.Bombs;
+using BoomermanServer.Models.Powerups.BombCount;
+using BoomermanServer.Models.Powerups.Health;
+using BoomermanServer.Models.Powerups.Speed;
 using Xunit;
 
 namespace tests
@@ -43,6 +46,30 @@ namespace tests
             var wall = new Wall();
             wall.Position = new Position(0, 0);
             var dto = wall.ToDTO();
+            Assert.NotNull(dto);
+        }
+
+        [Fact]
+        public void SpeedPowerupToDTO()
+        {
+            var powerup = new SmallSpeedPowerup(new Position(0, 0));
+            var dto = powerup.ToDTO();
+            Assert.NotNull(dto);
+        }
+
+        [Fact]
+        public void HealthPowerupToDTO()
+        {
+            var powerup = new SmallHealthPowerup(new Position(0, 0));
+            var dto = powerup.ToDTO();
+            Assert.NotNull(dto);
+        }
+
+        [Fact]
+        public void BombPowerupToDTO()
+        {
+            var powerup = new SmallBombCountPowerup(new Position(0, 0));
+            var dto = powerup.ToDTO();
             Assert.NotNull(dto);
         }
     }
