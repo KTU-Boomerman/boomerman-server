@@ -4,8 +4,8 @@ namespace BoomermanServer.Game
 {
     public class Player : IDataTransferable<PlayerDTO>
     {
-        private string _id;
-        private Position _position;
+        public string ID { get; private set; }
+        public Position Position { get; set; }
         public double Speed { get; set; }
         public int Health { get; set; }
         public int MaxBombCount { get; set; }
@@ -13,30 +13,19 @@ namespace BoomermanServer.Game
 
         public Player(string id, Position position)
         {
-            _id = id;
-            _position = position;
+            ID = id;
+            Position = position;
             Speed = 1.0;
             Health = 100;
             MaxBombCount = 1;
-        }
-
-        public string ID
-        {
-            get { return _id; }
-        }
-
-        public Position Position
-        {
-            get { return _position; }
-            set { _position = value; }
         }
 
         public PlayerDTO ToDTO()
         {
             return new PlayerDTO()
             {
-                ID = _id,
-                Position = _position.ToDTO()
+                ID = this.ID,
+                Position = this.Position.ToDTO()
             };
         }
     }
