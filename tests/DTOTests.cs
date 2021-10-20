@@ -1,5 +1,6 @@
 using BoomermanServer.Data;
 using BoomermanServer.Game;
+using BoomermanServer.Models.Bombs;
 using Xunit;
 
 namespace tests
@@ -24,6 +25,15 @@ namespace tests
             };
             var position = new Position(dto);
             Assert.NotNull(position);
+        }
+
+        [Fact]
+        public void BombToDTO()
+        {
+            var bomb = new RegularBomb();
+            bomb.SetPosition(new Position(0, 0));
+            var dto = bomb.ToDTO();
+            Assert.NotNull(dto);
         }
     }
 }
