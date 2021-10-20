@@ -26,17 +26,23 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch",
+            "label": "tests",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "watch",
-                "run",
-                "${workspaceFolder}/server/boomerman-server.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "--project",
+                "${workspaceFolder}/tests",
+                "test",
+                "/p:CollectCoverage=true",
+                "/p:CoverletOutputFormat=lcov",
+                "/p:CoverletOutput=./lcov.info"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
         }
     ]
 }
