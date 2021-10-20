@@ -6,7 +6,6 @@ namespace BoomermanServer.Models.Powerups.Speed
     public abstract class SpeedPowerup : Powerup, IDataTransferable<SpeedPowerupDTO>
     {
         protected double _speedPercentage;
-        protected Position _position;
 
         public SpeedPowerup(Position position, double speedPercentage)
         {
