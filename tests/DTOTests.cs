@@ -72,5 +72,41 @@ namespace tests
             var dto = powerup.ToDTO();
             Assert.NotNull(dto);
         }
+
+        [Fact]
+        public void CreateCreateBombDTO()
+        {
+            var dto = new CreateBombDTO
+            {
+                BombType = BombType.Regular
+            };
+            Assert.NotNull(dto);
+        }
+
+        [Fact]
+        public void CreateGameStateDTO()
+        {
+            var dto = new GameStateDTO
+            {
+                GameState = GameState.GameInProgress.ToString()
+            };
+            Assert.NotNull(dto);
+        }
+
+        [Fact]
+        public void CreatePositionValidationDTO()
+        {
+            var positionDto = new PositionDTO
+            {
+                X = 0,
+                Y = 0
+            };
+            var dto = new PositionValidationDTO
+            {
+                IsValid = true,
+                Position = positionDto
+            };
+            Assert.NotNull(dto);
+        }
     }
 }
