@@ -1,3 +1,4 @@
+using boomerman_server.Models.Walls;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models.Bombs;
@@ -33,6 +34,15 @@ namespace tests
             var bomb = new RegularBomb();
             bomb.SetPosition(new Position(0, 0));
             var dto = bomb.ToDTO();
+            Assert.NotNull(dto);
+        }
+
+        [Fact]
+        public void WallToDTO()
+        {
+            var wall = new Wall();
+            wall.Position = new Position(0, 0);
+            var dto = wall.ToDTO();
             Assert.NotNull(dto);
         }
     }
