@@ -6,7 +6,6 @@ namespace BoomermanServer.Models.Powerups.BombCount
     public abstract class BombCountPowerup : Powerup, IDataTransferable<BombCountPowerupDTO>
     {
         protected int _bombCountToAdd;
-        protected Position _position;
 
         public BombCountPowerup(Position position, int bombCountToAdd)
         {

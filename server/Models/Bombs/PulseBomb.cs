@@ -19,7 +19,5 @@ namespace BoomermanServer.Models.Bombs
         {
             Console.WriteLine("Pulse explosion"); // TODO: Add actual explosion logic
         }
-
-
     }
 }

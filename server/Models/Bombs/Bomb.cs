@@ -10,7 +10,6 @@ namespace BoomermanServer.Models.Bombs
         public abstract void Explode(); // KABOOM
         public abstract void SetPosition(Position position);
 
-
         public BombDTO ToDTO()
         {
             return new BombDTO()
