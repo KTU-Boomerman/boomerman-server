@@ -10,21 +10,19 @@ namespace BoomermanServer.Game
         private readonly Position[] _spawnPoints = new Position[]{
             new Position(100, 100),
         };
-
-        private Dictionary<string, Player> _players;
-        public Dictionary<string, Player> Players { get => _players; set => _players = value; }
+        public Dictionary<string, Player> Players { get; set; }
         public PlayerManager()
         {
-            _players = new Dictionary<string, Player>();
+            Players = new Dictionary<string, Player>();
         }
 
         public Player AddPlayer(string id)
         {
-            lock(_players) {
+            lock(Players) {
                 Position spawnPoint = getRandomSpawnPoint();
                 Player player = new Player(id, spawnPoint);
 
-                _players.Add(id, player);
+                Players.Add(id, player);
             
                 return player;
             }
@@ -32,30 +30,30 @@ namespace BoomermanServer.Game
 
         public Player GetPlayer(string id)
         {
-            return _players[id];
+            return Players[id];
         }
 
         public void RemovePlayer(string id)
         {
-            lock(_players) {
-                _players.Remove(id);
+            lock(Players) {
+                Players.Remove(id);
             }
         }
 
         public void MovePlayer(string id, Position position)
         {
-            Player player = _players[id];
+            Player player = Players[id];
             player.Position = position;
         }
 
         public int GetPlayerCount()
         {
-            return _players.Count;
+            return Players.Count;
         }
 
         public List<Player> GetPlayers()
         {
-            return _players.Values.ToList();
+            return Players.Values.ToList();
         }
 
         private Position getRandomSpawnPoint()
