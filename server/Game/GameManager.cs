@@ -2,12 +2,11 @@ namespace BoomermanServer.Game
 {
     public class GameManager : IGameManager
     {
-        private GameState _gameState;
-        public GameState GameState { get => _gameState; set => _gameState = value; }
+        public GameState GameState { get; set; }
 
         public GameManager()
         {
-            _gameState = GameState.GameInProgress;
+            GameState = GameState.GameInProgress;
         }
 
         public int GetMinPlayers()
@@ -17,7 +16,7 @@ namespace BoomermanServer.Game
 
         public void StartGame()
         {
-            _gameState = GameState.GameInProgress;
+            GameState = GameState.GameInProgress;
         }
     }
 }
