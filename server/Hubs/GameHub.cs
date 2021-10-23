@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models;
+using BoomermanServer.Models.Bombs;
+using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Factories;
 using Microsoft.AspNetCore.SignalR;
 
@@ -28,12 +30,31 @@ namespace BoomermanServer.Hubs
         private readonly IGameManager _gameManager;
         private readonly IPlayerManager _playerManager;
         private readonly Queue<Explosion> _pendingExplosions;
+        private Dictionary<BombType, Bomb> _bombs;
 
         public GameHub(IGameManager gameManager, IPlayerManager playerManager)
         {
             _gameManager = gameManager;
             _playerManager = playerManager;
             _pendingExplosions = new Queue<Explosion>();
+            InitializeBombsDictionary();
+        }
+
+        private void InitializeBombsDictionary()
+        {
+            var regularDecorator = new BombDecorator(BombType.Regular);
+
+            var waveDecorator = new BombDecorator(BombType.Wave);
+            waveDecorator.Component = regularDecorator;
+
+            var pulseDecorator = new BombDecorator(BombType.Pulse);
+            pulseDecorator.Component = waveDecorator;
+
+            var boomerangDecorator = new BombDecorator(BombType.Boomerang);
+            boomerangDecorator.Component = pulseDecorator;
+            
+            boomerangDecorator.Execute();
+            _bombs = boomerangDecorator.Bombs;
         }
 
         public async Task PlayerJoin()

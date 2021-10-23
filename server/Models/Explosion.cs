@@ -26,7 +26,6 @@ namespace BoomermanServer.Models
                 _bomb.Explode();
                 _pendingExplosions.Dequeue();
             }
-
         }
 
         private void SetupTimer()
