@@ -27,8 +27,6 @@ namespace BoomermanServer.Hubs
 	*/
     public class GameHub : Hub
     {
-        //private readonly IGameManager _gameManager;
-        //private readonly IPlayerManager _playerManager;
         private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
         private Dictionary<BombType, Bomb> _bombs;
