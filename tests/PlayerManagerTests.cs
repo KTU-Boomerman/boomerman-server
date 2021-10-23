@@ -40,7 +40,7 @@ namespace tests
             manager.AddPlayer(_id);
             var player = manager.GetPlayer(_id);
             var position = player.Position;
-            manager.MovePlayer(_id, new Position(0, 0));
+            manager.MovePlayer(_id, new Position(position.X + 1, position.Y + 1));
             Assert.NotEqual(position, player.Position);
         }
 

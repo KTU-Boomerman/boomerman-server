@@ -20,9 +20,11 @@ namespace BoomermanServer.Patterns.Decorator
 
         public override void Execute()
         {
-            if(Component != null)
+            if(Component != null && Component is BombDecorator)
             {
-                Component.Execute();
+                var bombComponent = Component as BombDecorator;
+                bombComponent.Execute();
+                Bombs = bombComponent.Bombs;
             }
             if(!Bombs.ContainsKey(_type))
             {
