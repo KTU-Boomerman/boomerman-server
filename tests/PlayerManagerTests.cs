@@ -5,7 +5,7 @@ namespace tests
 {
     public class PlayerManagerTests
     {
-        private string _id = "AAA";
+        private const string _id = "AAA";
 
         [Fact]
         public void AddPlayer()
