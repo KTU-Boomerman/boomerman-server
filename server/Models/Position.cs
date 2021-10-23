@@ -1,7 +1,9 @@
+using System;
 using BoomermanServer.Data;
 
 namespace BoomermanServer.Game
 {
+    [Serializable]
     public class Position : IDataTransferable<PositionDTO>
     {
         public Position(double x, double y)
@@ -26,6 +28,21 @@ namespace BoomermanServer.Game
                 X = X,
                 Y = Y
             };
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is Position)
+            {
+                var position = obj as Position;
+                return position.X == X && position.Y == Y;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }
