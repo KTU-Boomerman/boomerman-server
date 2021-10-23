@@ -1,8 +1,10 @@
+using System;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 
 namespace BoomermanServer.Models.Bombs
 {
+    [Serializable]
     public abstract class Bomb : IDataTransferable<BombDTO>
     {
         protected Position _position;

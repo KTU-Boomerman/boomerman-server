@@ -1,7 +1,9 @@
+using System;
 using BoomermanServer.Data;
 
 namespace BoomermanServer.Game
 {
+    [Serializable]
     public class Position : IDataTransferable<PositionDTO>
     {
         public Position(double x, double y)

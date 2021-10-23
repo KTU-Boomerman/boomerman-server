@@ -6,6 +6,7 @@ using BoomermanServer.Game;
 
 namespace BoomermanServer.Models.Bombs
 {
+    [Serializable]
     public class BoomerangBomb : Bomb
     {
         public BoomerangBomb()
