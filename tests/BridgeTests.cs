@@ -46,5 +46,41 @@ namespace tests
             applier.ApplyPowerup(player);
             Assert.True(bombsBefore < player.MaxBombCount);
         }
+
+        [Fact]
+        public void RemoveSpeed()
+        {
+            var position = new Position(0, 0);
+            var player = new Player(_id, position);
+            var remover = new ConcreteRemover();
+            remover.Powerup = new SmallSpeedPowerup(position);
+            var speedBefore = player.Speed;
+            remover.RemovePowerup(player);
+            Assert.True(speedBefore > player.Speed);
+        }
+
+        [Fact]
+        public void RemoveHealth()
+        {
+            var position = new Position(0, 0);
+            var player = new Player(_id, position);
+            var remover = new ConcreteRemover();
+            remover.Powerup = new SmallHealthPowerup(position);
+            var healthBefore = player.Health;
+            remover.RemovePowerup(player);
+            Assert.True(healthBefore > player.Health);
+        }
+
+        [Fact]
+        public void RemoveBombCount()
+        {
+            var position = new Position(0, 0);
+            var player = new Player(_id, position);
+            var remover = new ConcreteRemover();
+            remover.Powerup = new SmallBombCountPowerup(position);
+            var bombsBefore = player.MaxBombCount;
+            remover.RemovePowerup(player);
+            Assert.True(bombsBefore > player.MaxBombCount);
+        }
     }
 }
