@@ -20,5 +20,20 @@ namespace BoomermanServer.Models.Bombs
                 BombType = _bombType
             };
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is Bomb)
+            {
+                var bomb = obj as Bomb;
+                return bomb._bombType == _bombType && bomb._position.Equals(_position);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
