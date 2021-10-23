@@ -7,8 +7,10 @@ namespace BoomermanServer.Models.Bombs
     {
         protected Position _position;
         protected BombType _bombType;
-        public abstract void Explode(); // KABOOM
+        public abstract void Explode();
         public abstract void SetPosition(Position position);
+        public abstract Bomb Clone();
+        public abstract Bomb DeepClone();
 
         public BombDTO ToDTO()
         {

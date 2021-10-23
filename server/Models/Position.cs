@@ -27,5 +27,20 @@ namespace BoomermanServer.Game
                 Y = Y
             };
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is Position)
+            {
+                var position = obj as Position;
+                return position.X == X && position.Y == Y;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
