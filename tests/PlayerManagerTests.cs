@@ -1,4 +1,5 @@
 using BoomermanServer.Game;
+using BoomermanServer.Patterns.Facade;
 using Xunit;
 
 namespace tests
@@ -11,17 +12,19 @@ namespace tests
         public void AddPlayer()
         {
             var manager = new PlayerManager();
-            var countBefore = manager.GetPlayerCount();
-            manager.AddPlayer(_id);
-            Assert.True(countBefore < manager.GetPlayerCount());
+            var facade = new ManagerFacade(null, manager);
+            var countBefore = facade.GetPlayerCount();
+            facade.AddPlayer(_id);
+            Assert.True(countBefore < facade.GetPlayerCount());
         }
 
         [Fact]
         public void GetPlayer()
         {
             var manager = new PlayerManager();
-            manager.AddPlayer(_id);
-            var player = manager.GetPlayer(_id);
+            var facade = new ManagerFacade(null, manager);
+            facade.AddPlayer(_id);
+            var player = facade.GetPlayer(_id);
             Assert.NotNull(player);
         }
 
@@ -29,7 +32,8 @@ namespace tests
         public void GetPlayerList()
         {
             var manager = new PlayerManager();
-            var list = manager.GetPlayers();
+            var facade = new ManagerFacade(null, manager);
+            var list = facade.GetPlayers();
             Assert.NotNull(list);
         }
 
@@ -37,10 +41,11 @@ namespace tests
         public void MovePlayer()
         {
             var manager = new PlayerManager();
-            manager.AddPlayer(_id);
-            var player = manager.GetPlayer(_id);
+            var facade = new ManagerFacade(null, manager);
+            facade.AddPlayer(_id);
+            var player = facade.GetPlayer(_id);
             var position = player.Position;
-            manager.MovePlayer(_id, new Position(position.X + 1, position.Y + 1));
+            facade.MovePlayer(_id, new Position(position.X + 1, position.Y + 1));
             Assert.NotEqual(position, player.Position);
         }
 
@@ -48,10 +53,11 @@ namespace tests
         public void RemovePlayer()
         {
             var manager = new PlayerManager();
-            manager.AddPlayer(_id);
-            var countBefore = manager.GetPlayerCount();
-            manager.RemovePlayer(_id);
-            Assert.True(countBefore > manager.GetPlayerCount());
+            var facade = new ManagerFacade(null, manager);
+            facade.AddPlayer(_id);
+            var countBefore = facade.GetPlayerCount();
+            facade.RemovePlayer(_id);
+            Assert.True(countBefore > facade.GetPlayerCount());
         }
     }
 }

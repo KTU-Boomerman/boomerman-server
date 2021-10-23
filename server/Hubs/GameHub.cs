@@ -7,7 +7,7 @@ using BoomermanServer.Game;
 using BoomermanServer.Models;
 using BoomermanServer.Models.Bombs;
 using BoomermanServer.Patterns.Decorator;
-using BoomermanServer.Patterns.Factories;
+using BoomermanServer.Patterns.Facade;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BoomermanServer.Hubs
@@ -27,15 +27,13 @@ namespace BoomermanServer.Hubs
 	*/
     public class GameHub : Hub
     {
-        private readonly IGameManager _gameManager;
-        private readonly IPlayerManager _playerManager;
+        private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
         private Dictionary<BombType, Bomb> _bombs;
 
         public GameHub(IGameManager gameManager, IPlayerManager playerManager)
         {
-            _gameManager = gameManager;
-            _playerManager = playerManager;
+            _managerFacade = new ManagerFacade(gameManager, playerManager);
             _pendingExplosions = new Queue<Explosion>();
             InitializeBombsDictionary();
         }
@@ -59,10 +57,10 @@ namespace BoomermanServer.Hubs
 
         public async Task PlayerJoin()
         {
-            var playerDto = _playerManager.AddPlayer(Context.ConnectionId).ToDTO();
+            var playerDto = _managerFacade.AddPlayer(Context.ConnectionId).ToDTO();
             await Clients.Others.SendAsync("PlayerJoin", playerDto);
 
-            var playersDto = _playerManager
+            var playersDto = _managerFacade
                 .GetPlayers()
                 .Where(p => p.ID != Context.ConnectionId)
                 .Select(p => p.ToDTO())
@@ -70,21 +68,21 @@ namespace BoomermanServer.Hubs
 
             var gameStateDto = new GameStateDTO
             {
-                GameState = _gameManager.GameState.ToString(),
+                GameState = _managerFacade.GameState.ToString(),
             };
 
             await Clients.Caller.SendAsync("Joined", playerDto, playersDto, gameStateDto);
 
-            if (_playerManager.GetPlayerCount() >= _gameManager.GetMinPlayers())
+            if (_managerFacade.GetPlayerCount() >= _managerFacade.GetMinPlayers())
             {
-                _gameManager.StartGame();
+                _managerFacade.StartGame();
                 await ChangeGameState();
             }
         }
 
         public async Task PlayerLeave()
         {
-            _playerManager.RemovePlayer(Context.ConnectionId);
+            _managerFacade.RemovePlayer(Context.ConnectionId);
             await Clients.Others.SendAsync("PlayerLeave", Context.ConnectionId);
         }
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -96,14 +94,14 @@ namespace BoomermanServer.Hubs
         // TODO: calculate and validate positon on backend
         public async Task<PositionValidationDTO> PlayerMove(PositionDTO position)
         {
-            if (_gameManager.GameState != GameState.GameInProgress)
+            if (_managerFacade.GameState != GameState.GameInProgress)
             {
-                var originalPostion = _playerManager.GetPlayer(Context.ConnectionId).Position;
+                var originalPostion = _managerFacade.GetPlayer(Context.ConnectionId).Position;
                 var positionDto = new PositionDTO { X = originalPostion.X, Y = originalPostion.Y };
                 return new PositionValidationDTO { IsValid = false, Position = positionDto };
             }
 
-            _playerManager.MovePlayer(Context.ConnectionId, new Position(position));
+            _managerFacade.MovePlayer(Context.ConnectionId, new Position(position));
             await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, position);
             return new PositionValidationDTO { IsValid = true };
         }
@@ -112,14 +110,14 @@ namespace BoomermanServer.Hubs
         {
             var gameStateDto = new GameStateDTO
             {
-                GameState = _gameManager.GameState.ToString(),
+                GameState = _managerFacade.GameState.ToString(),
             };
             await Clients.All.SendAsync("GameStateChange", gameStateDto);
         }
 
         public async Task PlaceBomb(CreateBombDTO bombDTO)
         {
-            var player = _playerManager.GetPlayer(Context.ConnectionId);
+            var player = _managerFacade.GetPlayer(Context.ConnectionId);
             var bomb = _bombs[bombDTO.BombType].Clone();
             bomb.SetPosition(player.Position);
             await Clients.Others.SendAsync("PlayerPlaceBomb", bomb.ToDTO());

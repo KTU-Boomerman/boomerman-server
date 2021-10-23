@@ -1,4 +1,5 @@
 using BoomermanServer.Game;
+using BoomermanServer.Patterns.Facade;
 using Xunit;
 
 namespace tests
@@ -9,15 +10,17 @@ namespace tests
         public void MinPlayers()
         {
             var manager = new GameManager();
-            Assert.Equal(1, manager.GetMinPlayers());
+            var facade = new ManagerFacade(manager, null);
+            Assert.Equal(1, facade.GetMinPlayers());
         }
 
         [Fact]
         public void GameInProgress()
         {
             var manager = new GameManager();
-            manager.StartGame();
-            Assert.Equal(GameState.GameInProgress, manager.GameState);
+            var facade = new ManagerFacade(manager, null);
+            facade.StartGame();
+            Assert.Equal(GameState.GameInProgress, facade.GameState);
         }
     }
 }
