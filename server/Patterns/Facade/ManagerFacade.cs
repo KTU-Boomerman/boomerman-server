@@ -14,7 +14,7 @@ namespace BoomermanServer.Patterns.Facade
             _playerManager = playerManager;
         }
 
-        public void AddPlayer(string id) => _playerManager.AddPlayer(id);
+        public Player AddPlayer(string id) => _playerManager.AddPlayer(id);
 
         public void RemovePlayer(string id) => _playerManager.RemovePlayer(id);
 
@@ -24,10 +24,12 @@ namespace BoomermanServer.Patterns.Facade
 
         public int GetPlayerCount() => _playerManager.GetPlayerCount();
 
-        public List<Player> GetPlayers => _playerManager.GetPlayers();
+        public List<Player> GetPlayers() => _playerManager.GetPlayers();
 
         public int GetMinPlayers() => _gameManager.GetMinPlayers();
 
         public void StartGame() => _gameManager.StartGame();
+
+        public GameState GameState => _gameManager.GameState;
     }
 }
