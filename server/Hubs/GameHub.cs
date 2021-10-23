@@ -120,8 +120,8 @@ namespace BoomermanServer.Hubs
         public async Task PlaceBomb(CreateBombDTO bombDTO)
         {
             var player = _playerManager.GetPlayer(Context.ConnectionId);
-            var bombFactory = new BombFactory();
-            var bomb = bombFactory.CreateBomb(bombDTO.BombType, player.Position);
+            var bomb = _bombs[bombDTO.BombType].Clone();
+            bomb.SetPosition(player.Position);
             await Clients.Others.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
             _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
