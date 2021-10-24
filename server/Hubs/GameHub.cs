@@ -6,6 +6,7 @@ using BoomermanServer.Data;
 using BoomermanServer.Game;
 using BoomermanServer.Models;
 using BoomermanServer.Models.Bombs;
+using BoomermanServer.Patterns.Adapter;
 using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
 using Microsoft.AspNetCore.SignalR;
@@ -31,11 +32,15 @@ namespace BoomermanServer.Hubs
         private readonly Queue<Explosion> _pendingExplosions;
         private Dictionary<BombType, Bomb> _bombs;
 
+        private DiscordApi _discordApi;
+
         public GameHub(IGameManager gameManager, IPlayerManager playerManager)
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager);
             _pendingExplosions = new Queue<Explosion>();
             InitializeBombsDictionary();
+
+            _discordApi = new DiscordApi();
         }
 
         private void InitializeBombsDictionary()
@@ -72,6 +77,8 @@ namespace BoomermanServer.Hubs
             };
 
             await Clients.Caller.SendAsync("Joined", playerDto, playersDto, gameStateDto);
+
+            SendNotification("New player!", "Player has joined the game");
 
             if (_managerFacade.GetPlayerCount() >= _managerFacade.GetMinPlayers())
             {
@@ -112,6 +119,7 @@ namespace BoomermanServer.Hubs
             {
                 GameState = _managerFacade.GameState.ToString(),
             };
+
             await Clients.All.SendAsync("GameStateChange", gameStateDto);
         }
 
@@ -122,6 +130,15 @@ namespace BoomermanServer.Hubs
             bomb.SetPosition(player.Position);
             await Clients.Others.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
             _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
+        }
+
+        private void SendNotification(string title, string message)
+        {
+            var gameNotifcation = new GameNotifcation(Clients.All);
+            var discordNotification = new DiscordNotification(_discordApi);
+
+            gameNotifcation.Send(title, message);
+            discordNotification.Send(title, message);            
         }
     }
 }
