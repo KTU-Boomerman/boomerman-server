@@ -449,3 +449,4 @@ $RECYCLE.BIN/
 
 # Test coverage
 lcov.info
+testgenerator/
