@@ -8,7 +8,10 @@ namespace BoomermanServer.Game
     {
         // TODO: refactor once we have maps with their spawn points
         private readonly Position[] _spawnPoints = new Position[]{
-            new Position(100, 100),
+            new Position(32, 32),
+            new Position(480, 32),
+            new Position(32, 352),
+            new Position(480, 352),
         };
         public Dictionary<string, Player> Players { get; set; }
         public PlayerManager()

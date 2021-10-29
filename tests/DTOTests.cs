@@ -103,7 +103,6 @@ namespace tests
             };
             var dto = new PositionValidationDTO
             {
-                IsValid = true,
                 Position = positionDto
             };
             Assert.NotNull(dto);

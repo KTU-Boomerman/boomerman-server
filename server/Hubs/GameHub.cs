@@ -30,6 +30,7 @@ namespace BoomermanServer.Hubs
     {
         private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
+        private readonly MapManager _mapManager;
         private Dictionary<BombType, Bomb> _bombs;
 
         private DiscordApi _discordApi;
@@ -38,6 +39,7 @@ namespace BoomermanServer.Hubs
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager);
             _pendingExplosions = new Queue<Explosion>();
+            _mapManager = new MapManager();
             InitializeBombsDictionary();
 
             _discordApi = new DiscordApi();
@@ -99,18 +101,20 @@ namespace BoomermanServer.Hubs
         }
 
         // TODO: calculate and validate positon on backend
-        public async Task<PositionValidationDTO> PlayerMove(PositionDTO position)
+        public async Task<PositionValidationDTO> PlayerMove(PositionDTO orgPosition, PositionDTO newPosition)
         {
             if (_managerFacade.GameState != GameState.GameInProgress)
             {
                 var originalPostion = _managerFacade.GetPlayer(Context.ConnectionId).Position;
                 var positionDto = new PositionDTO { X = originalPostion.X, Y = originalPostion.Y };
-                return new PositionValidationDTO { IsValid = false, Position = positionDto };
+                return new PositionValidationDTO { Position = positionDto };
             }
 
-            _managerFacade.MovePlayer(Context.ConnectionId, new Position(position));
-            await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, position);
-            return new PositionValidationDTO { IsValid = true };
+            var returnPos = _mapManager.CheckCollision(new Position(orgPosition), new Position(newPosition));
+
+            _managerFacade.MovePlayer(Context.ConnectionId, returnPos);
+            await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, returnPos.ToDTO());
+            return new PositionValidationDTO { Position = returnPos.ToDTO() };
         }
 
         private async Task ChangeGameState()
