@@ -26,20 +26,23 @@ namespace BoomermanServer.Hubs
     * BombExplode - explosion in tiles and removed walls
     * PowerupPickup
 	*/
-    public class GameHub : Hub
+    public class GameHub : Hub<IGameHub>
     {
         private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
         private readonly MapManager _mapManager;
         private Dictionary<BombType, Bomb> _bombs;
 
+        private IExplosionQueue _explosionQueue;
+
         private DiscordApi _discordApi;
 
-        public GameHub(IGameManager gameManager, IPlayerManager playerManager)
+        public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue)
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager);
             _pendingExplosions = new Queue<Explosion>();
             _mapManager = new MapManager();
+            _explosionQueue = explosionQueue;
             InitializeBombsDictionary();
 
             _discordApi = new DiscordApi();
@@ -65,7 +68,7 @@ namespace BoomermanServer.Hubs
         public async Task PlayerJoin()
         {
             var playerDto = _managerFacade.AddPlayer(Context.ConnectionId).ToDTO();
-            await Clients.Others.SendAsync("PlayerJoin", playerDto);
+            await Clients.Others.PlayerJoin(playerDto);
 
             var playersDto = _managerFacade
                 .GetPlayers()
@@ -78,7 +81,7 @@ namespace BoomermanServer.Hubs
                 GameState = _managerFacade.GameState.ToString(),
             };
 
-            await Clients.Caller.SendAsync("Joined", playerDto, playersDto, gameStateDto);
+            await Clients.Caller.Joined(playerDto, playersDto, gameStateDto);
 
             SendNotification("New player!", "Player has joined the game");
 
@@ -92,7 +95,7 @@ namespace BoomermanServer.Hubs
         public async Task PlayerLeave()
         {
             _managerFacade.RemovePlayer(Context.ConnectionId);
-            await Clients.Others.SendAsync("PlayerLeave", Context.ConnectionId);
+            await Clients.Others.PlayerLeave(Context.ConnectionId);
         }
         public override async Task OnDisconnectedAsync(Exception exception)
         {
@@ -111,7 +114,7 @@ namespace BoomermanServer.Hubs
             var currentPosition = _mapManager.CheckCollision(new Position(originalPosition), new Position(newPosition));
 
             _managerFacade.MovePlayer(Context.ConnectionId, currentPosition);
-            await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, currentPosition.ToDTO());
+            await Clients.Others.PlayerMove(Context.ConnectionId, currentPosition.ToDTO());
 
             return currentPosition.ToDTO();
         }
@@ -123,7 +126,7 @@ namespace BoomermanServer.Hubs
                 GameState = _managerFacade.GameState.ToString(),
             };
 
-            await Clients.All.SendAsync("GameStateChange", gameStateDto);
+            await Clients.All.GameStateChange(gameStateDto);
         }
 
         public async Task PlaceBomb(CreateBombDTO bombDTO)
@@ -131,17 +134,26 @@ namespace BoomermanServer.Hubs
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
             var bomb = _bombs[bombDTO.BombType].Clone();
             bomb.SetPosition(player.Position);
-            await Clients.Others.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
-            _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
+            await Clients.Others.PlayerPlaceBomb(bomb.ToDTO());
+
+            // await Task.Delay(bomb.GetBombType().GetPlacementTime());
+            // await bomb.Remove();
+            _explosionQueue.Add(new Explosion(player.Position, TimeSpan.FromSeconds(2)));
+            // _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
 
         private void SendNotification(string title, string message)
         {
-            var gameNotifcation = new GameNotifcation(Clients.All);
-            var discordNotification = new DiscordNotification(_discordApi);
+            // var gameNotifcation = new GameNotifcation(this);
+            // var discordNotification = new DiscordNotification(_discordApi);
 
-            gameNotifcation.Send(title, message);
-            discordNotification.Send(title, message);            
+            // gameNotifcation.Send(title, message);
+            // discordNotification.Send(title, message);            
         }
-    }
+
+		public async Task Explosion(Position position)
+		{
+			await Clients.All.Explosion(position.ToDTO());
+		}
+	}
 }

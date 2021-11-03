@@ -1,3 +1,4 @@
+using BoomermanServer.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
 /**
@@ -7,16 +8,17 @@ namespace BoomermanServer.Patterns.Adapter
 {
     public class GameNotifcation : Notification
     {
-        private IClientProxy _client;
+        private IHubContext<GameHub, IGameHub> _gameHub;
 
-        public GameNotifcation(IClientProxy client)
+        public GameNotifcation(IHubContext<GameHub, IGameHub> gameHub)
         {
-            _client = client;
+            _gameHub = gameHub;
         }
 
-        public void Send(string title, string message)
+
+		public void Send(string title, string message)
         {
-            _client.SendAsync("Notification", title, message);
+            _gameHub.Clients.All.Notification(title, message);
         }
     }
 }
