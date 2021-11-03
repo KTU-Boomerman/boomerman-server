@@ -9,6 +9,7 @@ using BoomermanServer.Models.Bombs;
 using BoomermanServer.Patterns.Adapter;
 using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
+using BoomermanServer.Patterns.Strategy;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BoomermanServer.Hubs
@@ -34,6 +35,7 @@ namespace BoomermanServer.Hubs
         private Dictionary<BombType, Bomb> _bombs;
 
         private IExplosionQueue _explosionQueue;
+        private ExplosionContext _explosionContext;
 
         private DiscordApi _discordApi;
 
@@ -44,6 +46,7 @@ namespace BoomermanServer.Hubs
             _mapManager = new MapManager();
             _explosionQueue = explosionQueue;
             InitializeBombsDictionary();
+            _explosionContext = new ExplosionContext(new BasicExplosion());
 
             _discordApi = new DiscordApi();
         }
@@ -138,7 +141,10 @@ namespace BoomermanServer.Hubs
 
             // await Task.Delay(bomb.GetBombType().GetPlacementTime());
             // await bomb.Remove();
-            _explosionQueue.Add(new Explosion(player.Position, TimeSpan.FromSeconds(2)));
+            var explosions = _explosionContext.GetExplosions(player.Position, TimeSpan.FromSeconds(2));
+            _explosionQueue.UnionWith(explosions);
+
+            // _explosionQueue.Add();
             // _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
 
