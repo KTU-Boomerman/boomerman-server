@@ -101,20 +101,19 @@ namespace BoomermanServer.Hubs
         }
 
         // TODO: calculate and validate positon on backend
-        public async Task<PositionValidationDTO> PlayerMove(PositionDTO orgPosition, PositionDTO newPosition)
+        public async Task<PositionDTO> PlayerMove(PositionDTO originalPosition, PositionDTO newPosition)
         {
             if (_managerFacade.GameState != GameState.GameInProgress)
             {
-                var originalPostion = _managerFacade.GetPlayer(Context.ConnectionId).Position;
-                var positionDto = new PositionDTO { X = originalPostion.X, Y = originalPostion.Y };
-                return new PositionValidationDTO { Position = positionDto };
+                return _managerFacade.GetPlayer(Context.ConnectionId).Position.ToDTO();
             }
 
-            var returnPos = _mapManager.CheckCollision(new Position(orgPosition), new Position(newPosition));
+            var currentPosition = _mapManager.CheckCollision(new Position(originalPosition), new Position(newPosition));
 
-            _managerFacade.MovePlayer(Context.ConnectionId, returnPos);
-            await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, returnPos.ToDTO());
-            return new PositionValidationDTO { Position = returnPos.ToDTO() };
+            _managerFacade.MovePlayer(Context.ConnectionId, currentPosition);
+            await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, currentPosition.ToDTO());
+
+            return currentPosition.ToDTO();
         }
 
         private async Task ChangeGameState()
