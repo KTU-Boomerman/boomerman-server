@@ -8,6 +8,7 @@ using BoomermanServer.Models;
 using BoomermanServer.Models.Bombs;
 using BoomermanServer.Patterns.Adapter;
 using BoomermanServer.Patterns.Decorator;
+using BoomermanServer.Patterns.Decorator2;
 using BoomermanServer.Patterns.Facade;
 using Microsoft.AspNetCore.SignalR;
 
@@ -101,20 +102,19 @@ namespace BoomermanServer.Hubs
         }
 
         // TODO: calculate and validate positon on backend
-        public async Task<PositionValidationDTO> PlayerMove(PositionDTO orgPosition, PositionDTO newPosition)
+        public async Task<PositionDTO> PlayerMove(PositionDTO originalPosition, PositionDTO newPosition)
         {
             if (_managerFacade.GameState != GameState.GameInProgress)
             {
-                var originalPostion = _managerFacade.GetPlayer(Context.ConnectionId).Position;
-                var positionDto = new PositionDTO { X = originalPostion.X, Y = originalPostion.Y };
-                return new PositionValidationDTO { Position = positionDto };
+                return _managerFacade.GetPlayer(Context.ConnectionId).Position.ToDTO();
             }
 
-            var returnPos = _mapManager.CheckCollision(new Position(orgPosition), new Position(newPosition));
+            var currentPosition = _mapManager.CheckCollision(new Position(originalPosition), new Position(newPosition));
 
-            _managerFacade.MovePlayer(Context.ConnectionId, returnPos);
-            await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, returnPos.ToDTO());
-            return new PositionValidationDTO { Position = returnPos.ToDTO() };
+            _managerFacade.MovePlayer(Context.ConnectionId, currentPosition);
+            await Clients.Others.SendAsync("PlayerMove", Context.ConnectionId, currentPosition.ToDTO());
+
+            return currentPosition.ToDTO();
         }
 
         private async Task ChangeGameState()
@@ -131,9 +131,26 @@ namespace BoomermanServer.Hubs
         {
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
             var bomb = _bombs[bombDTO.BombType].Clone();
-            bomb.SetPosition(player.Position);
-            await Clients.Others.SendAsync("PlayerPlaceBomb", bomb.ToDTO());
-            _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
+
+            var defusableBomb = new Defusable(bomb);
+            defusableBomb.SetPosition(player.Position);
+
+            await Clients.Others.SendAsync("PlayerPlaceBomb", defusableBomb.ToDTO());
+            _pendingExplosions.Enqueue(new Explosion(defusableBomb, _pendingExplosions));
+        }
+
+        public async Task DefuseBomb(PositionDTO positionDto)
+        {
+            // TODO: update checking based on position
+            var position = new Position(positionDto);
+            var player = _managerFacade.GetPlayer(Context.ConnectionId);
+            var bomb = _pendingExplosions.FirstOrDefault(e => e._bomb._position.Equals(position))._bomb;
+
+            if (bomb is Defusable defusableBomb)
+            {
+                defusableBomb.Defuse();
+                await Clients.All.SendAsync("BombDefuse", defusableBomb.ToDTO());
+            }
         }
 
         private void SendNotification(string title, string message)

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using BoomermanServer.Data;
 using BoomermanServer.Game;
 
@@ -7,13 +9,11 @@ namespace BoomermanServer.Models.Bombs
     [Serializable]
     public abstract class Bomb : IDataTransferable<BombDTO>
     {
-        protected Position _position;
+        public Position _position { get; protected set; }
         protected BombType _bombType;
         public abstract void Explode();
         public abstract void SetPosition(Position position);
-        public abstract Bomb Clone();
-        public abstract Bomb DeepClone();
-
+        
         public BombDTO ToDTO()
         {
             return new BombDTO()
@@ -36,6 +36,23 @@ namespace BoomermanServer.Models.Bombs
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public virtual Bomb Clone()
+        {
+            return MemberwiseClone() as BoomerangBomb;
+        }
+
+        public virtual Bomb DeepClone()
+        {
+            #pragma warning disable SYSLIB0011
+            using (var memoryStream = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(memoryStream, this);
+                memoryStream.Position = 0;
+                return formatter.Deserialize(memoryStream) as BoomerangBomb;
+            }
         }
     }
 }

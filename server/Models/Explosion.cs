@@ -6,12 +6,13 @@ namespace BoomermanServer.Models
 {
     public class Explosion
     {
-        private Bomb _bomb;
+        public Bomb _bomb { get; private set; }
         private Queue<Explosion> _pendingExplosions;
         private Timer _timer;
         private const int ExplosionInterval = 3000;
 
-        public Explosion(Bomb bomb, Queue<Explosion> pendingExplosions)
+
+		public Explosion(Bomb bomb, Queue<Explosion> pendingExplosions)
         {
             _bomb = bomb;
             _pendingExplosions = pendingExplosions;
