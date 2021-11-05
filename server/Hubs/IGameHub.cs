@@ -11,7 +11,7 @@ namespace BoomermanServer.Hubs
         Task GameStateChange(GameStateDTO gameStateDto);
         Task PlayerMove(string playerId, PositionDTO positionDto);
         Task PlayerLeave(string playerId);
-        Task Joined(PlayerDTO playerDto, PlayerDTO[] playersDto, GameStateDTO gameStateDto, string mapDto);
+        Task Joined(PlayerDTO playerDto, PlayerDTO[] playersDto, GameStateDTO gameStateDto, MapDTO mapDto);
         Task PlayerJoin(PlayerDTO playerDto);
     }
 }

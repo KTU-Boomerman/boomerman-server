@@ -5,24 +5,24 @@ namespace BoomermanServer.Game
 {
     public class MapManager
     {
-        private string[,] originalMap =
+        private string[][] originalMap =
         {
-            {"ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw"},
-            {"ndw","grs","grs","grs","dew","dew","dew","dew","grs","dew","dew","dew","dew","grs","grs","grs","ndw"},
-            {"ndw","grs","ndw","ndw","dew","grs","grs","dew","ndw","dew","grs","grs","dew","ndw","ndw","grs","ndw"},
-            {"ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw"},
-            {"ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw"},
-            {"ndw","grs","dew","dew","dew","ndw","ndw","dew","grs","dew","ndw","ndw","dew","dew","dew","grs","ndw"},
-            {"ndw","grs","ndw","ndw","dew","dew","dew","dew","grs","dew","dew","dew","dew","ndw","ndw","grs","ndw"},
-            {"ndw","grs","dew","dew","dew","ndw","ndw","dew","grs","dew","ndw","ndw","dew","dew","dew","grs","ndw"},
-            {"ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw"},
-            {"ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw"},
-            {"ndw","grs","ndw","ndw","dew","grs","grs","dew","ndw","dew","grs","grs","dew","ndw","ndw","grs","ndw"},
-            {"ndw","grs","grs","grs","dew","dew","dew","dew","grs","dew","dew","dew","dew","grs","grs","grs","ndw"},
-            {"ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw"},
+            new []{"ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw"},
+            new []{"ndw","grs","grs","grs","dew","dew","dew","dew","grs","dew","dew","dew","dew","grs","grs","grs","ndw"},
+            new []{"ndw","grs","ndw","ndw","dew","grs","grs","dew","ndw","dew","grs","grs","dew","ndw","ndw","grs","ndw"},
+            new []{"ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw"},
+            new []{"ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw"},
+            new []{"ndw","grs","dew","dew","dew","ndw","ndw","dew","grs","dew","ndw","ndw","dew","dew","dew","grs","ndw"},
+            new []{"ndw","grs","ndw","ndw","dew","dew","dew","dew","grs","dew","dew","dew","dew","ndw","ndw","grs","ndw"},
+            new []{"ndw","grs","dew","dew","dew","ndw","ndw","dew","grs","dew","ndw","ndw","dew","dew","dew","grs","ndw"},
+            new []{"ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw"},
+            new []{"ndw","dew","dew","dew","dew","ndw","ndw","dew","ndw","dew","ndw","ndw","dew","dew","dew","dew","ndw"},
+            new []{"ndw","grs","ndw","ndw","dew","grs","grs","dew","ndw","dew","grs","grs","dew","ndw","ndw","grs","ndw"},
+            new []{"ndw","grs","grs","grs","dew","dew","dew","dew","grs","dew","dew","dew","dew","grs","grs","grs","ndw"},
+            new []{"ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw"},
         };
 
-        public string[,] map { get; private set; }
+        public string[][] map { get; private set; }
 
         public MapManager()
         {
@@ -53,7 +53,7 @@ namespace BoomermanServer.Game
             {
                 case > 0:
                 {
-                    if (map[orgBRY, newTLX] == "ndw" || map[orgTLY, newTLX] == "ndw")
+                    if (map[orgBRY][newTLX] == "ndw" || map[orgTLY][newTLX] == "ndw")
                     {
                         posX = (newTLX + 1) * 32;
                     }
@@ -62,7 +62,7 @@ namespace BoomermanServer.Game
                 }
                 case < 0:
                 {
-                    if (map[orgBRY, newBRX] == "ndw" || map[orgTLY, newBRX] == "ndw")
+                    if (map[orgBRY][newBRX] == "ndw" || map[orgTLY][newBRX] == "ndw")
                     {
                         posX = (newBRX - 1) * 32;
                     }
@@ -75,7 +75,7 @@ namespace BoomermanServer.Game
             {
                 case > 0:
                 {
-                    if (map[newTLY, orgBRX] == "ndw" || map[newTLY, orgTLX] == "ndw")
+                    if (map[newTLY][orgBRX] == "ndw" || map[newTLY][orgTLX] == "ndw")
                     {
                         posY = (newTLY + 1) * 32;
                     }
@@ -84,7 +84,7 @@ namespace BoomermanServer.Game
                 }
                 case < 0:
                 {
-                    if (map[newBRY, orgBRX] == "ndw" || map[newBRY, orgTLX] == "ndw")
+                    if (map[newBRY][orgBRX] == "ndw" || map[newBRY][orgTLX] == "ndw")
                     {
                         posY = (newBRY - 1) * 32;
                     }
@@ -117,7 +117,6 @@ namespace BoomermanServer.Game
             {
                 posY -= dY;
             }
-            Console.WriteLine($"{position.X} {position.Y} {posX} {posY}");
             return new Position(posX, posY);
         }
     }

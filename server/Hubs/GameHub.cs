@@ -84,7 +84,12 @@ namespace BoomermanServer.Hubs
                 GameState = _managerFacade.GameState.ToString(),
             };
 
-            await Clients.Caller.Joined(playerDto, playersDto, gameStateDto, _mapManager.mapJSON());
+            var mapDTO = new MapDTO
+            {
+                Map = _mapManager.map,
+            };
+
+            await Clients.Caller.Joined(playerDto, playersDto, gameStateDto, mapDTO);
 
             SendNotification("New player!", "Player has joined the game");
 
