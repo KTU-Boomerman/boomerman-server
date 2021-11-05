@@ -36,11 +36,16 @@ namespace BoomermanServer.Game
                     _mapManager.SetExplosion(explosion.Position);
                     Console.WriteLine($"Explosion at {explosion.Position.ToString()} on {DateTime.Now}");
                     await _gameHub.Clients.All.Explosion(explosion.Position.ToDTO());
-                    // await Task.Delay(1000);
-                    _mapManager.SetGrass(explosion.Position);
+                    RemoveGrass(explosion.Position);
                 }
                 await Task.Delay(Interval);
             }
 		}
+
+        private async void RemoveGrass(Position position)
+        {
+            await Task.Delay(1000);
+            _mapManager.SetGrass(position);
+        }
 	}
 }
