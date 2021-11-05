@@ -82,5 +82,30 @@ namespace BoomermanServer.Game
             
             return new Position(posX, posY);
         }
+
+        public Position SnapBombPosition(Position position)
+        {
+            var posX = position.X;
+            var posY = position.Y;
+            double dX, dY;
+            if ((dX = position.X % 32) > 16)
+            {
+                posX += 32 - dX;
+            }
+            else
+            {
+                posX -= dX;
+            }
+            if ((dY = position.Y % 32) > 16)
+            {
+                posY += 32 - dY;
+            }
+            else
+            {
+                posY -= dY;
+            }
+            Console.WriteLine($"{position.X} {position.Y} {posX} {posY}");
+            return new Position(posX, posY);
+        }
     }
 }

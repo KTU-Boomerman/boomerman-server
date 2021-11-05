@@ -106,7 +106,6 @@ namespace BoomermanServer.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        // TODO: calculate and validate positon on backend
         public async Task<PositionDTO> PlayerMove(PositionDTO originalPosition, PositionDTO newPosition)
         {
             if (_managerFacade.GameState != GameState.GameInProgress)
@@ -132,11 +131,12 @@ namespace BoomermanServer.Hubs
             await Clients.All.GameStateChange(gameStateDto);
         }
 
-        public async Task PlaceBomb(CreateBombDTO bombDTO)
+        public async Task<PositionDTO> PlaceBomb(CreateBombDTO bombDTO)
         {
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
             var bomb = _bombs[bombDTO.BombType].Clone();
-            bomb.SetPosition(player.Position);
+            var bombPosition = _mapManager.SnapBombPosition(player.Position);
+            bomb.SetPosition(bombPosition);
             await Clients.Others.PlayerPlaceBomb(bomb.ToDTO());
 
             // await Task.Delay(bomb.GetBombType().GetPlacementTime());
@@ -144,6 +144,7 @@ namespace BoomermanServer.Hubs
             var explosions = _explosionContext.GetExplosions(player.Position, TimeSpan.FromSeconds(2));
             _explosionQueue.UnionWith(explosions);
 
+            return bombPosition.ToDTO();
             // _explosionQueue.Add();
             // _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
         }
