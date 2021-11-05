@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using BoomermanServer.Game;
+using Newtonsoft.Json;
 
 namespace BoomermanServer.Data
 {
     public class MapDTO
     {
-        [JsonProperty("map")]
-        public string[][] Map { get; set; }
+        [JsonProperty("walls")]
+        public List<Position> Walls { get; set; }
     }
 }

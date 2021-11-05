@@ -1,6 +1,7 @@
 ﻿using System;
 using BoomermanServer.Models;
 using BoomermanServer.Models.Explosions;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace BoomermanServer.Game
@@ -96,6 +97,31 @@ namespace BoomermanServer.Game
             }
             
             return new Position(posX, posY);
+        }
+
+        public List<Position> GetDestructibleWalls()
+        {
+            var results = new List<Position>();
+            for (int i = 0; i < map.Length; i++)
+            {
+                var line = map[i];
+                for (int j = 0; j < line.Length; j++)
+                {
+                    if (map[i][j] == "dew")
+                    {
+                        results.Add(new Position(j*32, i*32));
+                    }
+                }
+            }
+            return results;
+        }
+
+        public void DestroyWall(Position position)
+        {
+            var posX = Convert.ToInt32(Math.Floor(position.X / 32));
+            var posY = Convert.ToInt32(Math.Floor(position.Y / 32));
+
+            map[posY][posX] = "grs";
         }
 
         public Position SnapBombPosition(Position position)
