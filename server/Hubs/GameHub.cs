@@ -151,11 +151,11 @@ namespace BoomermanServer.Hubs
 
         private void SendNotification(string title, string message)
         {
-            // var gameNotifcation = new GameNotifcation(this);
-            // var discordNotification = new DiscordNotification(_discordApi);
+            var gameNotifcation = new GameNotifcation(this);
+            var discordNotification = new DiscordNotification(_discordApi);
 
-            // gameNotifcation.Send(title, message);
-            // discordNotification.Send(title, message);            
+            gameNotifcation.Send(title, message);
+            discordNotification.Send(title, message);            
         }
 
 		public async Task Explosion(Position position)
