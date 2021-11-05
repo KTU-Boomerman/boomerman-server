@@ -1,38 +1,36 @@
-using System.Collections.Generic;
-using System.Timers;
-using BoomermanServer.Models.Bombs;
+using System;
+using BoomermanServer.Game;
 
 namespace BoomermanServer.Models
 {
-    public class Explosion
+    public class Explosion : IComparable<Explosion>
     {
-        private Bomb _bomb;
-        private Queue<Explosion> _pendingExplosions;
-        private Timer _timer;
-        private const int ExplosionInterval = 3000;
+        private Position _position;
+        private DateTime _timeLeft;
+        private DateTime _spawnTime;
 
-        public Explosion(Bomb bomb, Queue<Explosion> pendingExplosions)
+        public Explosion(Position position, TimeSpan timeLeft)
         {
-            _bomb = bomb;
-            _pendingExplosions = pendingExplosions;
-            SetupTimer();
+            _position = position;
+            _timeLeft = DateTime.Now.Add(timeLeft);
+            _spawnTime = DateTime.Now;
         }
 
-        public void Explode(object sender, ElapsedEventArgs args)
+        public bool ShouldExplode()
         {
-            if (_pendingExplosions.Count > 0)
-            {
-                _timer.Stop();
-                _bomb.Explode();
-                _pendingExplosions.Dequeue();
-            }
+            return DateTime.Now >= _timeLeft;
         }
 
-        private void SetupTimer()
+        public Position Position => _position;
+
+        public int Compare(Explosion x, Explosion y)
         {
-            _timer = new Timer(ExplosionInterval);
-            _timer.Elapsed += new ElapsedEventHandler(Explode);
-            _timer.Start();
+            return x._timeLeft.CompareTo(y._timeLeft);
         }
-    }
+
+		public int CompareTo(Explosion other)
+		{
+            return Compare(this, other);
+		}
+	}
 }

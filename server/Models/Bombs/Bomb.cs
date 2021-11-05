@@ -14,6 +14,8 @@ namespace BoomermanServer.Models.Bombs
         public abstract Bomb Clone();
         public abstract Bomb DeepClone();
 
+        public Position Position => _position;
+
         public BombDTO ToDTO()
         {
             return new BombDTO()

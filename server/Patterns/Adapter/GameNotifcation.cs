@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.SignalR;
+using BoomermanServer.Hubs;
 
 /**
  * Here's an example of the existing class that follows the Target interface.
@@ -7,16 +7,17 @@ namespace BoomermanServer.Patterns.Adapter
 {
     public class GameNotifcation : Notification
     {
-        private IClientProxy _client;
+        private GameHub _gameHub;
 
-        public GameNotifcation(IClientProxy client)
+        public GameNotifcation(GameHub gameHub)
         {
-            _client = client;
+            _gameHub = gameHub;
         }
 
-        public void Send(string title, string message)
+
+		public void Send(string title, string message)
         {
-            _client.SendAsync("Notification", title, message);
+            _gameHub.Clients.All.Notification(title, message);
         }
     }
 }
