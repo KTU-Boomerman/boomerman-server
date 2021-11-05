@@ -39,11 +39,11 @@ namespace BoomermanServer.Hubs
 
         private DiscordApi _discordApi;
 
-        public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue)
+        public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager)
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager);
             _pendingExplosions = new Queue<Explosion>();
-            _mapManager = new MapManager();
+            _mapManager = mapManager;
             _explosionQueue = explosionQueue;
             InitializeBombsDictionary();
             _explosionContext = new ExplosionContext(new BasicExplosion());
@@ -168,10 +168,5 @@ namespace BoomermanServer.Hubs
             gameNotifcation.Send(title, message);
             discordNotification.Send(title, message);            
         }
-
-		public async Task Explosion(Position position)
-		{
-			await Clients.All.Explosion(position.ToDTO());
-		}
-	}
+    }
 }

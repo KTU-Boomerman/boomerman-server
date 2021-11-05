@@ -20,6 +20,7 @@ namespace BoomermanServer
             services.AddSingleton<IGameManager, GameManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IExplosionQueue, ExplosionQueue>();
+            services.AddSingleton<MapManager>();
 
             services.AddHostedService<ExplosionBroadcaster>();
             

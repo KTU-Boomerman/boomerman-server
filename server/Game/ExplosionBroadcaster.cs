@@ -14,11 +14,13 @@ namespace BoomermanServer.Game
     {
         private readonly TimeSpan Interval = TimeSpan.FromMilliseconds(40);
         private readonly IHubContext<GameHub, IGameHub> _gameHub;
+        private readonly MapManager _mapManager;
         private IExplosionQueue _explosionQueue;
 
-        public ExplosionBroadcaster(IHubContext<GameHub, IGameHub> gameHub, IExplosionQueue explosionQueue)
+        public ExplosionBroadcaster(IHubContext<GameHub, IGameHub> gameHub, IExplosionQueue explosionQueue, MapManager mapManager)
         {
             _gameHub = gameHub;
+            _mapManager = mapManager;
             _explosionQueue = explosionQueue;
         }
 
@@ -31,10 +33,12 @@ namespace BoomermanServer.Game
                 if (explosion != null && explosion.ShouldExplode())
                 {
                     _explosionQueue.Remove(explosion);
+                    _mapManager.SetExplosion(explosion.Position);
                     Console.WriteLine($"Explosion at {explosion.Position.ToString()} on {DateTime.Now}");
                     await _gameHub.Clients.All.Explosion(explosion.Position.ToDTO());
+                    // await Task.Delay(1000);
+                    _mapManager.SetGrass(explosion.Position);
                 }
-            
                 await Task.Delay(Interval);
             }
 		}
