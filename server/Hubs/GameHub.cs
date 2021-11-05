@@ -86,7 +86,7 @@ namespace BoomermanServer.Hubs
 
             var mapDTO = new MapDTO
             {
-                Map = _mapManager.map,
+                Walls = _mapManager.GetDestructibleWalls(),
             };
 
             await Clients.Caller.Joined(playerDto, playersDto, gameStateDto, mapDTO);
