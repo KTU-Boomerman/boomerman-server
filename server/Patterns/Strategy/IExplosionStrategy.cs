@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using BoomermanServer.Game;
-using BoomermanServer.Models;
+using BoomermanServer.Models.Explosions;
 
 namespace BoomermanServer.Patterns.Strategy
 {
     public interface IExplosionStrategy
     {
-        List<Explosion> GetExplosions(Position position, TimeSpan delay);
+        Explosions GetExplosions(Position position, TimeSpan delay);
     }
 }

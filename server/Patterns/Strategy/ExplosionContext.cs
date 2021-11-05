@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 using BoomermanServer.Game;
-using BoomermanServer.Models;
+using BoomermanServer.Models.Explosions;
 
 namespace BoomermanServer.Patterns.Strategy
 {
@@ -19,7 +18,7 @@ namespace BoomermanServer.Patterns.Strategy
             _strategy = strategy;
         }
 
-        public List<Explosion> GetExplosions(Position position, TimeSpan delay)
+        public Explosions GetExplosions(Position position, TimeSpan delay)
         {
             return _strategy.GetExplosions(position, delay);
         }

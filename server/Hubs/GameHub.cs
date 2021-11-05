@@ -136,22 +136,28 @@ namespace BoomermanServer.Hubs
             await Clients.All.GameStateChange(gameStateDto);
         }
 
-        public async Task<PositionDTO> PlaceBomb(CreateBombDTO bombDTO)
+        public async Task PlaceBomb(CreateBombDTO bombDTO)
         {
+            // Place bomb
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
-            var bomb = _bombs[bombDTO.BombType].Clone();
+            var bombType = bombDTO.BombType;
+            var bomb = _bombs[bombType].Clone();
             var bombPosition = _mapManager.SnapBombPosition(player.Position);
             bomb.SetPosition(bombPosition);
-            await Clients.Others.PlayerPlaceBomb(bomb.ToDTO());
+            await Clients.All.PlayerPlaceBomb(bomb.ToDTO());
+            
+            // Change explosion strategy
+            IExplosionStrategy strategy = bombType switch
+            {
+                BombType.Wave => new WaveExplosion(),
+                _ => new BasicExplosion(),
+            };
+            _explosionContext.SetStrategy(strategy);
 
-            // await Task.Delay(bomb.GetBombType().GetPlacementTime());
-            // await bomb.Remove();
+            // Enqueue explosions
             var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2));
-            _explosionQueue.UnionWith(explosions);
-
-            return bombPosition.ToDTO();
-            // _explosionQueue.Add();
-            // _pendingExplosions.Enqueue(new Explosion(bomb, _pendingExplosions));
+            var filteredExplosions = _mapManager.FilterExplosions(explosions);
+            _explosionQueue.UnionWith(filteredExplosions.ToList());
         }
 
         private void SendNotification(string title, string message)

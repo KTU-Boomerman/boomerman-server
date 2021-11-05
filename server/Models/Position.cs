@@ -1,5 +1,6 @@
 using System;
 using BoomermanServer.Data;
+using BoomermanServer.Models;
 
 namespace BoomermanServer.Game
 {
@@ -85,6 +86,27 @@ namespace BoomermanServer.Game
             get
             {
                 return new Position(0, 0);
+            }
+        }
+
+        public Direction GetDirection(Position position)
+        {
+            var deltaX = position.X - X;
+            var deltaY = position.Y - Y;
+
+            if (Math.Abs(deltaX) > Math.Abs(deltaY))
+            {
+                if (deltaX > 0)
+                    return Direction.Right;
+                else
+                    return Direction.Left;
+            }
+            else
+            {
+                if (deltaY > 0)
+                    return Direction.Down;
+                else
+                    return Direction.Up;
             }
         }
     }

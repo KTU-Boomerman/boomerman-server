@@ -1,4 +1,6 @@
 ﻿using System;
+using BoomermanServer.Models;
+using BoomermanServer.Models.Explosions;
 using Newtonsoft.Json;
 
 namespace BoomermanServer.Game
@@ -118,6 +120,27 @@ namespace BoomermanServer.Game
                 posY -= dY;
             }
             return new Position(posX, posY);
+        }
+
+        public Explosions FilterExplosions(Explosions explosions)
+        {
+            var newExplosions = new Explosions(explosions.Origin);
+
+            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            {
+                foreach (var explosion in explosions.GetExplosionsByDirection(direction))
+                {
+                    var posX = Convert.ToInt32(Math.Floor((explosion.Position.X) / 32));
+                    var posY = Convert.ToInt32(Math.Floor((explosion.Position.Y) / 32));
+
+                    if (map[posY][posX] == "ndw")
+                        break;
+                    
+                    newExplosions.AddExplosion(explosion);
+                }
+            }
+
+            return newExplosions;
         }
     }
 }

@@ -2,37 +2,35 @@ using System;
 using System.Collections.Generic;
 using BoomermanServer.Game;
 using BoomermanServer.Models;
+using BoomermanServer.Models.Explosions;
 
 namespace BoomermanServer.Patterns.Strategy
 {
 	public class WaveExplosion : IExplosionStrategy
 	{
-		public List<Explosion> GetExplosions(Position position, TimeSpan delay)
+		public Explosions GetExplosions(Position position, TimeSpan delay)
 		{
 			var tile = new Position(32, 32);
+			var origin = new Explosion(position, delay); 
+			var explosions = new Explosions(origin);
+			var waveDelay = TimeSpan.FromMilliseconds(300);
 
-			var explosions = new List<Explosion>();
-
-			explosions.Add(new Explosion(position, delay));
-
-			// TODO: only add explosions if they can go further and are not facing walls
 			for (int i = 1; i < 4; i++)
 			{
-				var newDelay = delay.Add(delay * i);
+				var newDelay = delay.Add(waveDelay * i);
 
 				// add explosion to the right
-				explosions.Add(new Explosion(new Position(position.X + tile.X * i, position.Y), newDelay));
+				explosions.AddExplosion(new Explosion(new Position(position.X + tile.X * i, position.Y), newDelay));
 
 				// add explosion to the top
-				explosions.Add(new Explosion(new Position(position.X, position.Y + tile.Y * i), newDelay));
+				explosions.AddExplosion(new Explosion(new Position(position.X, position.Y + tile.Y * i), newDelay));
 
 				// add explosion to the left
-				explosions.Add(new Explosion(new Position(position.X - tile.X * i, position.Y), newDelay));
+				explosions.AddExplosion(new Explosion(new Position(position.X - tile.X * i, position.Y), newDelay));
 
 				// add explosion to the bottom
-				explosions.Add(new Explosion(new Position(position.X, position.Y - tile.Y * i), newDelay));
+				explosions.AddExplosion(new Explosion(new Position(position.X, position.Y - tile.Y * i), newDelay));
 			}
-
 
 			return explosions;	
 		}
