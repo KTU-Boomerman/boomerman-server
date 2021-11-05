@@ -12,7 +12,7 @@ namespace BoomermanServer.Game
 {
     public class ExplosionBroadcaster : BackgroundService
     {
-        private readonly TimeSpan Interval = TimeSpan.FromMilliseconds(40);
+        private readonly TimeSpan Interval = TimeSpan.FromMilliseconds(10);
         private readonly IHubContext<GameHub, IGameHub> _gameHub;
         private readonly MapManager _mapManager;
         private IExplosionQueue _explosionQueue;

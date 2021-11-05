@@ -152,6 +152,22 @@ namespace BoomermanServer.Game
             var pos = GetMapPos(position);
             map[pos.Item1][pos.Item2] = "grs";
         }
+
+        public bool IsInExplosion(Position position)
+        {
+            var orgTLX = Convert.ToInt32(Math.Floor((position.X+2) / _cellSize));
+            var orgTLY = Convert.ToInt32(Math.Floor((position.Y+2) / _cellSize));
+            var orgBRX = Convert.ToInt32(Math.Floor((position.X+30) / _cellSize));
+            var orgBRY = Convert.ToInt32(Math.Floor((position.Y+30) / _cellSize));
+            
+            for (int i = orgTLY; i <= orgBRY; i++)
+                for (int j = orgTLX; j <= orgBRX; j++)
+                    if (map[i][j] == "exp")
+                        return true;
+
+            return false;
+        }
+
 /// <summary>
 /// Returns id's to interact with map. Returns Item1 - Y; Item2 - X
 /// </summary>
