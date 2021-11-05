@@ -84,7 +84,7 @@ namespace BoomermanServer.Hubs
                 GameState = _managerFacade.GameState.ToString(),
             };
 
-            await Clients.Caller.Joined(playerDto, playersDto, gameStateDto);
+            await Clients.Caller.Joined(playerDto, playersDto, gameStateDto, _mapManager.mapJSON());
 
             SendNotification("New player!", "Player has joined the game");
 
@@ -141,7 +141,7 @@ namespace BoomermanServer.Hubs
 
             // await Task.Delay(bomb.GetBombType().GetPlacementTime());
             // await bomb.Remove();
-            var explosions = _explosionContext.GetExplosions(player.Position, TimeSpan.FromSeconds(2));
+            var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2));
             _explosionQueue.UnionWith(explosions);
 
             return bombPosition.ToDTO();

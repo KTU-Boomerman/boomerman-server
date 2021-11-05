@@ -1,10 +1,11 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace BoomermanServer.Game
 {
     public class MapManager
     {
-        private string[,] map =
+        private string[,] originalMap =
         {
             {"ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw"},
             {"ndw","grs","grs","grs","dew","dew","dew","dew","grs","dew","dew","dew","dew","grs","grs","grs","ndw"},
@@ -20,6 +21,18 @@ namespace BoomermanServer.Game
             {"ndw","grs","grs","grs","dew","dew","dew","dew","grs","dew","dew","dew","dew","grs","grs","grs","ndw"},
             {"ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw","ndw"},
         };
+
+        public string[,] map { get; private set; }
+
+        public MapManager()
+        {
+            map = originalMap;
+        }
+
+        public string mapJSON()
+        {
+            return JsonConvert.SerializeObject(map, Formatting.Indented);
+        }
 
         public Position CheckCollision(Position originalPos, Position newPos)
         {
