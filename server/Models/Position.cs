@@ -89,6 +89,14 @@ namespace BoomermanServer.Game
             }
         }
 
+        public static Position Tile
+        {
+            get
+            {
+                return new Position(32, 32);
+            }
+        }
+
         public Direction GetDirection(Position position)
         {
             var deltaX = position.X - X;

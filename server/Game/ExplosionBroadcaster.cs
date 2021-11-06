@@ -35,9 +35,11 @@ namespace BoomermanServer.Game
                     _explosionQueue.Remove(explosion);
                     _mapManager.SetExplosion(explosion.Position);
                     Console.WriteLine($"Explosion at {explosion.Position.ToString()} on {DateTime.Now}");
-                    await _gameHub.Clients.All.Explosions(new[] {explosion.Position.ToDTO()});
                     RemoveGrass(explosion.Position);
                 }
+                
+                var explosionPositions = explosions.Select(e => e.Position.ToDTO()).ToArray();
+                await _gameHub.Clients.All.Explosions(explosionPositions);
 
                 await Task.Delay(Interval);
             }
