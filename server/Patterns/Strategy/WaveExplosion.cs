@@ -13,7 +13,7 @@ namespace BoomermanServer.Patterns.Strategy
 			var tile = new Position(32, 32);
 			var origin = new Explosion(position, delay); 
 			var explosions = new Explosions(origin);
-			var waveDelay = TimeSpan.FromMilliseconds(300);
+			var waveDelay = TimeSpan.FromMilliseconds(500);
 
 			for (int i = 1; i < 4; i++)
 			{
