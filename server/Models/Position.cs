@@ -94,6 +94,11 @@ namespace BoomermanServer.Game
             var deltaX = position.X - X;
             var deltaY = position.Y - Y;
 
+            if (deltaX == 0 && deltaY == 0)
+            {
+                return Direction.Origin;
+            }
+
             if (Math.Abs(deltaX) > Math.Abs(deltaY))
             {
                 if (deltaX > 0)

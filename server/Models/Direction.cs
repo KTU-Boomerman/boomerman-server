@@ -5,6 +5,7 @@ namespace BoomermanServer.Models
         Up,
         Down,
         Left,
-        Right
+        Right,
+        Origin
     }
 }
