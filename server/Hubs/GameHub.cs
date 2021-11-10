@@ -166,10 +166,10 @@ namespace BoomermanServer.Hubs
 
         private void SendNotification(string title, string message)
         {
-            var gameNotifcation = new GameNotifcation(this);
+            var gameNotification = new GameNotifcation(this);
             var discordNotification = new DiscordNotification(_discordApi);
 
-            gameNotifcation.Send(title, message);
+            gameNotification.Send(title, message);
             discordNotification.Send(title, message);            
         }
     }

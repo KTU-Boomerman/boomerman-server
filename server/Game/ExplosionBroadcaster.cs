@@ -37,7 +37,7 @@ namespace BoomermanServer.Game
                     var spawnItem = _mapManager.CanPowerupSpawn(explosion.Position);
                     _mapManager.SetExplosion(explosion.Position);
                     Console.WriteLine($"Explosion at {explosion.Position.ToString()} on {DateTime.Now}");
-                    RemoveGrass(explosion.Position, spawnItem);
+                    RemoveExplosion(explosion.Position, spawnItem);
                 }
                 
                 var explosionPositions = explosions.Select(e => e.Position.ToDTO()).ToArray();
@@ -47,7 +47,7 @@ namespace BoomermanServer.Game
             }
         }
 
-        private async void RemoveGrass(Position position, bool spawnItem)
+        private async void RemoveExplosion(Position position, bool spawnItem)
         {
             await Task.Delay(1000);
             if (spawnItem)

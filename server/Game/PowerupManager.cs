@@ -1,36 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using BoomermanServer.Hubs;
 using BoomermanServer.Models.Powerups;
 using BoomermanServer.Patterns.Factories;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BoomermanServer.Game
 {
     public class PowerupManager
     {
+        private readonly IHubContext<GameHub, IGameHub> _gameHub;
         private readonly MapManager _mapManager;
         private Random _random = new();
         private List<Powerup> _powerups;
 
-        public PowerupManager(MapManager mapManager)
+        public PowerupManager(IHubContext<GameHub, IGameHub> gameHub, MapManager mapManager)
         {
+            _gameHub = gameHub;
             _mapManager = mapManager;
+            _powerups = new List<Powerup>();
         }
 
         public void AddRandomPowerup(Position position)
         {
-            var bombChance = _random.NextDouble();
-            var factory = GetFactory();
-            switch (bombChance)
+            if (_random.NextDouble() < 0.2)
             {
-                case < 0.33:
-                    AddPowerup(factory.CreateHealthPowerup(position));
-                    break;
-                case >= 0.33 and < 0.67:
-                    AddPowerup(factory.CreateSpeedPowerup(position));
-                    break;
-                case >= 0.67:
-                    AddPowerup(factory.CreateBombCountPowerup(position));
-                    break;
+                var factory = GetFactory();
+                switch (_random.NextDouble())
+                {
+                    case < 0.33:
+                        AddPowerup(factory.CreateHealthPowerup(position));
+                        break;
+                    case >= 0.33 and < 0.67:
+                        AddPowerup(factory.CreateSpeedPowerup(position));
+                        break;
+                    case >= 0.67:
+                        AddPowerup(factory.CreateBombCountPowerup(position));
+                        break;
+                }
+            }
+            else
+            {
+                _mapManager.SetGrass(position);
             }
         }
 
@@ -43,10 +54,11 @@ namespace BoomermanServer.Game
                 return new BigPowerupFactory();
         }
 
-        private void AddPowerup(Powerup powerup)
+        private async void AddPowerup(Powerup powerup)
         {
             _powerups.Add(powerup);
             _mapManager.SetPowerup(powerup);
+            await _gameHub.Clients.All.PlacePowerup(powerup.ToDTO());
         }
     }
 }
