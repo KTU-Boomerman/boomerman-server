@@ -3,7 +3,7 @@ using BoomermanServer.Models;
 using BoomermanServer.Models.Explosions;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using BoomermanServer.Models.Powerups;
 
 namespace BoomermanServer.Game
 {
@@ -172,13 +172,25 @@ namespace BoomermanServer.Game
             return false;
         }
 
-/// <summary>
-/// Returns id's to interact with map. Returns Item1 - Y; Item2 - X
-/// </summary>
-/// <param name="pos"></param>
+        /// <summary>
+        /// Returns id's to interact with map. Returns Item1 - Y; Item2 - X
+        /// </summary>
+        /// <param name="pos"></param>
         private (int, int) GetMapPos(Position pos)
         {
             return (Convert.ToInt32(Math.Floor(pos.Y / _cellSize)), Convert.ToInt32(Math.Floor(pos.X / _cellSize)));
+        }
+
+        public bool CanPowerupSpawn(Position position)
+        {
+            var pos = GetMapPos(position);
+            return map[pos.Item1][pos.Item2] == "dew";
+        }
+
+        public void SetPowerup(Powerup powerup)
+        {
+            var pos = GetMapPos(powerup.GetPosition());
+            map[pos.Item1][pos.Item2] = "pwu";
         }
     }
 }

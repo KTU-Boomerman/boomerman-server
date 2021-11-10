@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BoomermanServer.Hubs;
-using BoomermanServer.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 
@@ -12,16 +10,19 @@ namespace BoomermanServer.Game
 {
     public class ExplosionBroadcaster : BackgroundService
     {
-        private readonly TimeSpan Interval = TimeSpan.FromMilliseconds(10);
+        private readonly TimeSpan _interval = TimeSpan.FromMilliseconds(10);
         private readonly IHubContext<GameHub, IGameHub> _gameHub;
         private readonly MapManager _mapManager;
+        private readonly PowerupManager _powerupManager;
         private IExplosionQueue _explosionQueue;
 
-        public ExplosionBroadcaster(IHubContext<GameHub, IGameHub> gameHub, IExplosionQueue explosionQueue, MapManager mapManager)
+        public ExplosionBroadcaster(IHubContext<GameHub, IGameHub> gameHub, IExplosionQueue explosionQueue, MapManager mapManager,
+                                    PowerupManager powerupManager)
         {
             _gameHub = gameHub;
             _mapManager = mapManager;
             _explosionQueue = explosionQueue;
+            _powerupManager = powerupManager;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -33,22 +34,28 @@ namespace BoomermanServer.Game
                 foreach (var explosion in explosions)
                 {
                     _explosionQueue.Remove(explosion);
+                    var spawnItem = _mapManager.CanPowerupSpawn(explosion.Position);
                     _mapManager.SetExplosion(explosion.Position);
                     Console.WriteLine($"Explosion at {explosion.Position.ToString()} on {DateTime.Now}");
-                    RemoveGrass(explosion.Position);
+                    RemoveGrass(explosion.Position, spawnItem);
                 }
                 
                 var explosionPositions = explosions.Select(e => e.Position.ToDTO()).ToArray();
                 await _gameHub.Clients.All.Explosions(explosionPositions);
 
-                await Task.Delay(Interval);
+                await Task.Delay(_interval);
             }
         }
 
-        private async void RemoveGrass(Position position)
+        private async void RemoveGrass(Position position, bool spawnItem)
         {
             await Task.Delay(1000);
-            _mapManager.SetGrass(position);
+            if (spawnItem)
+            {
+                _powerupManager.AddRandomPowerup(position);
+            }
+            else
+                _mapManager.SetGrass(position);
         }
 	}
 }

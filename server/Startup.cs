@@ -5,9 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BoomermanServer.Hubs;
 using BoomermanServer.Game;
-using BoomermanServer.Patterns.Adapter;
-using System.Collections.Generic;
-using BoomermanServer.Models;
 
 namespace BoomermanServer
 {
@@ -20,6 +17,7 @@ namespace BoomermanServer
             services.AddSingleton<IGameManager, GameManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IExplosionQueue, ExplosionQueue>();
+            services.AddSingleton<PowerupManager>();
             services.AddSingleton<MapManager>();
 
             services.AddHostedService<GameLoop>();

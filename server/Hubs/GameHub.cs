@@ -32,6 +32,7 @@ namespace BoomermanServer.Hubs
         private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
         private readonly MapManager _mapManager;
+        private readonly PowerupManager _powerupManager;
         private Dictionary<BombType, Bomb> _bombs;
 
         private IExplosionQueue _explosionQueue;
@@ -39,11 +40,12 @@ namespace BoomermanServer.Hubs
 
         private DiscordApi _discordApi;
 
-        public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager)
+        public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, PowerupManager powerupManager)
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager);
             _pendingExplosions = new Queue<Explosion>();
             _mapManager = mapManager;
+            _powerupManager = powerupManager;
             _explosionQueue = explosionQueue;
             InitializeBombsDictionary();
             _explosionContext = new ExplosionContext(new BasicExplosion());

@@ -9,5 +9,10 @@ namespace BoomermanServer.Models.Powerups
         public abstract void ApplyPowerup(Player player);
 
         public abstract void RemovePowerup(Player player);
+
+        public Position GetPosition()
+        {
+            return _position;
+        } 
     }
 }
