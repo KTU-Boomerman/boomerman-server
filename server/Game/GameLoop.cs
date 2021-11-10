@@ -31,7 +31,8 @@ namespace BoomermanServer.Game
                     {
                         player.IsImmortal = true;
                         Console.WriteLine("Player " + player.ID + " is in explosion");
-                        await _gameHub.Clients.All.UpdateLives(player.ID, --player.Lives);
+                        if (player.Lives > 0)
+                            await _gameHub.Clients.All.UpdateLives(player.ID, --player.Lives);
                         RemoveImmoratality(player);
                     }
                 }
