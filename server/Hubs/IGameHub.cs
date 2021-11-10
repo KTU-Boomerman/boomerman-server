@@ -13,6 +13,6 @@ namespace BoomermanServer.Hubs
         Task PlayerLeave(string playerId);
         Task Joined(PlayerDTO playerDto, PlayerDTO[] playersDto, GameStateDTO gameStateDto, MapDTO mapDto);
         Task PlayerJoin(PlayerDTO playerDto);
-        Task UpdateLives(int lives);
+        Task UpdateLives(string playerId, int lives);
     }
 }

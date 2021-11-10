@@ -27,13 +27,11 @@ namespace BoomermanServer.Game
             {
                 foreach (var player in _playerManager.GetPlayers())
                 {
-                    // Console.WriteLine($"{player.ID} is moving");
                     if (_mapManager.IsInExplosion(player.Position) && !player.IsImmortal)
                     {
                         player.IsImmortal = true;
                         Console.WriteLine("Player " + player.ID + " is in explosion");
-                        await _gameHub.Clients.All.UpdateLives(--player.Lives);
-
+                        await _gameHub.Clients.All.UpdateLives(player.ID, --player.Lives);
                         RemoveImmoratality(player);
                     }
                 }
