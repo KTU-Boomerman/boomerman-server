@@ -150,6 +150,8 @@ namespace BoomermanServer.Hubs
             IExplosionStrategy strategy = bombType switch
             {
                 BombType.Wave => new WaveExplosion(),
+                BombType.Pulse => new PulseExplosion(),
+                BombType.Boomerang => new BoomerangExplosion(),
                 _ => new BasicExplosion(),
             };
             _explosionContext.SetStrategy(strategy);

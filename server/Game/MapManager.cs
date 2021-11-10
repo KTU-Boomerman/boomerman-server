@@ -39,14 +39,14 @@ namespace BoomermanServer.Game
 
         public Position CheckCollision(Position originalPos, Position newPos)
         {
-            var newTLX = Convert.ToInt32(Math.Floor((newPos.X+2) / _cellSize));
-            var newTLY = Convert.ToInt32(Math.Floor((newPos.Y+2) / _cellSize));
-            var newBRX = Convert.ToInt32(Math.Floor((newPos.X+30) / _cellSize));
-            var newBRY = Convert.ToInt32(Math.Floor((newPos.Y+30) / _cellSize));
-            var orgTLX = Convert.ToInt32(Math.Floor((originalPos.X+2) / _cellSize));
-            var orgTLY = Convert.ToInt32(Math.Floor((originalPos.Y+2) / _cellSize));
-            var orgBRX = Convert.ToInt32(Math.Floor((originalPos.X+30) / _cellSize));
-            var orgBRY = Convert.ToInt32(Math.Floor((originalPos.Y+30) / _cellSize));
+            var newLeftX = Convert.ToInt32(Math.Floor((newPos.X+2) / _cellSize));
+            var newTopY = Convert.ToInt32(Math.Floor((newPos.Y+2) / _cellSize));
+            var newRightX = Convert.ToInt32(Math.Floor((newPos.X+30) / _cellSize));
+            var newBottomY = Convert.ToInt32(Math.Floor((newPos.Y+30) / _cellSize));
+            var orgLeftX = Convert.ToInt32(Math.Floor((originalPos.X+2) / _cellSize));
+            var orgTopY = Convert.ToInt32(Math.Floor((originalPos.Y+2) / _cellSize));
+            var orgRightX = Convert.ToInt32(Math.Floor((originalPos.X+30) / _cellSize));
+            var orgBottomY = Convert.ToInt32(Math.Floor((originalPos.Y+30) / _cellSize));
             
             var posX = newPos.X;
             var posY = newPos.Y;
@@ -55,27 +55,31 @@ namespace BoomermanServer.Game
             switch (dX)
             {
                 case > 0:
-                    if (collidableTiles.Contains(map[orgBRY][newTLX]) || collidableTiles.Contains(map[orgTLY][newTLX]))
-                        posX = (newTLX + 1) * _cellSize;
+                    // left side
+                    if (collidableTiles.Contains(map[orgBottomY][newLeftX]) || collidableTiles.Contains(map[orgTopY][newLeftX]))
+                        posX = (newLeftX + 1) * _cellSize - 1;
                     break;
                 case < 0:
-                    if (collidableTiles.Contains(map[orgBRY][newBRX]) || collidableTiles.Contains(map[orgTLY][newBRX]))
-                        posX = (newBRX - 1) * _cellSize;
+                    // right side
+                    if (collidableTiles.Contains(map[orgBottomY][newRightX]) || collidableTiles.Contains(map[orgTopY][newRightX]))
+                        posX = (newRightX - 1) * _cellSize + 1;
                     break;
             }
 
             switch (dY)
             {
                 case > 0:
-                    if (collidableTiles.Contains(map[newTLY][orgBRX]) || collidableTiles.Contains(map[newTLY][orgTLX]))
-                        posY = (newTLY + 1) * _cellSize;
+                    // top side
+                    if (collidableTiles.Contains(map[newTopY][orgRightX]) || collidableTiles.Contains(map[newTopY][orgLeftX]))
+                        posY = (newTopY + 1) * _cellSize - 1;
                     break;
                 case < 0:
-                    if (collidableTiles.Contains(map[newBRY][orgBRX]) || collidableTiles.Contains(map[newBRY][orgTLX]))
-                        posY = (newBRY - 1) * _cellSize;
+                    // bottom side
+                    if (collidableTiles.Contains(map[newBottomY][orgRightX]) || collidableTiles.Contains(map[newBottomY][orgLeftX]))
+                        posY = (newBottomY - 1) * _cellSize + 1;
                     break;
             }
-            
+
             return new Position(posX, posY);
         }
 
@@ -99,7 +103,7 @@ namespace BoomermanServer.Game
             var posX = position.X;
             var posY = position.Y;
             double dX, dY;
-            if ((dX = position.X % _cellSize) > 16)
+            if ((dX = position.X % _cellSize) > _cellSize / 2.0)
             {
                 posX += _cellSize - dX;
             }
@@ -107,7 +111,7 @@ namespace BoomermanServer.Game
             {
                 posX -= dX;
             }
-            if ((dY = position.Y % _cellSize) > 16)
+            if ((dY = position.Y % _cellSize) > _cellSize / 2.0)
             {
                 posY += _cellSize - dY;
             }
@@ -152,6 +156,22 @@ namespace BoomermanServer.Game
             var pos = GetMapPos(position);
             map[pos.Item1][pos.Item2] = "grs";
         }
+
+        public bool IsInExplosion(Position position)
+        {
+            var leftX = Convert.ToInt32(Math.Floor((position.X+2) / _cellSize));
+            var topY = Convert.ToInt32(Math.Floor((position.Y+2) / _cellSize));
+            var rightX = Convert.ToInt32(Math.Floor((position.X+30) / _cellSize));
+            var bottomY = Convert.ToInt32(Math.Floor((position.Y+30) / _cellSize));
+            
+            for (int i = topY; i <= bottomY; i++)
+                for (int j = leftX; j <= rightX; j++)
+                    if (map[i][j] == "exp")
+                        return true;
+
+            return false;
+        }
+
 /// <summary>
 /// Returns id's to interact with map. Returns Item1 - Y; Item2 - X
 /// </summary>

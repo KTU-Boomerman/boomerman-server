@@ -12,7 +12,7 @@ namespace BoomermanServer.Game
 {
     public class ExplosionBroadcaster : BackgroundService
     {
-        private readonly TimeSpan Interval = TimeSpan.FromMilliseconds(40);
+        private readonly TimeSpan Interval = TimeSpan.FromMilliseconds(10);
         private readonly IHubContext<GameHub, IGameHub> _gameHub;
         private readonly MapManager _mapManager;
         private IExplosionQueue _explosionQueue;
@@ -24,23 +24,26 @@ namespace BoomermanServer.Game
             _explosionQueue = explosionQueue;
         }
 
-		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-		{
-			while (!stoppingToken.IsCancellationRequested)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
             {
-                var explosion = _explosionQueue.FirstOrDefault();
+                var explosions = _explosionQueue.Where(e => e.ShouldExplode()).ToList();
 
-                if (explosion != null && explosion.ShouldExplode())
+                foreach (var explosion in explosions)
                 {
                     _explosionQueue.Remove(explosion);
                     _mapManager.SetExplosion(explosion.Position);
                     Console.WriteLine($"Explosion at {explosion.Position.ToString()} on {DateTime.Now}");
-                    await _gameHub.Clients.All.Explosion(explosion.Position.ToDTO());
                     RemoveGrass(explosion.Position);
                 }
+                
+                var explosionPositions = explosions.Select(e => e.Position.ToDTO()).ToArray();
+                await _gameHub.Clients.All.Explosions(explosionPositions);
+
                 await Task.Delay(Interval);
             }
-		}
+        }
 
         private async void RemoveGrass(Position position)
         {

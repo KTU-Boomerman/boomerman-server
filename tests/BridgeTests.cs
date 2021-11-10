@@ -30,9 +30,9 @@ namespace tests
             var player = new Player(_id, position);
             var applier = new ConcreteApplier();
             applier.Powerup = new SmallHealthPowerup(position);
-            var healthBefore = player.Health;
+            var healthBefore = player.Lives;
             applier.ApplyPowerup(player);
-            Assert.True(healthBefore < player.Health);
+            Assert.True(healthBefore < player.Lives);
         }
 
         [Fact]
@@ -66,9 +66,9 @@ namespace tests
             var player = new Player(_id, position);
             var remover = new ConcreteRemover();
             remover.Powerup = new SmallHealthPowerup(position);
-            var healthBefore = player.Health;
+            var healthBefore = player.Lives;
             remover.RemovePowerup(player);
-            Assert.True(healthBefore > player.Health);
+            Assert.True(healthBefore > player.Lives);
         }
 
         [Fact]
