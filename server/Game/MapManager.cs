@@ -41,12 +41,12 @@ namespace BoomermanServer.Game
         {
             var newLeftX = Convert.ToInt32(Math.Floor((newPos.X+2) / _cellSize));
             var newTopY = Convert.ToInt32(Math.Floor((newPos.Y+2) / _cellSize));
-            var newRightX = Convert.ToInt32(Math.Floor((newPos.X+30) / _cellSize));
-            var newBottomY = Convert.ToInt32(Math.Floor((newPos.Y+30) / _cellSize));
+            var newRightX = Convert.ToInt32(Math.Floor((newPos.X+_cellSize-2) / _cellSize));
+            var newBottomY = Convert.ToInt32(Math.Floor((newPos.Y+_cellSize-2) / _cellSize));
             var orgLeftX = Convert.ToInt32(Math.Floor((originalPos.X+2) / _cellSize));
             var orgTopY = Convert.ToInt32(Math.Floor((originalPos.Y+2) / _cellSize));
-            var orgRightX = Convert.ToInt32(Math.Floor((originalPos.X+30) / _cellSize));
-            var orgBottomY = Convert.ToInt32(Math.Floor((originalPos.Y+30) / _cellSize));
+            var orgRightX = Convert.ToInt32(Math.Floor((originalPos.X+_cellSize-2) / _cellSize));
+            var orgBottomY = Convert.ToInt32(Math.Floor((originalPos.Y+_cellSize-2) / _cellSize));
             
             var posX = newPos.X;
             var posY = newPos.Y;
@@ -161,8 +161,8 @@ namespace BoomermanServer.Game
         {
             var leftX = Convert.ToInt32(Math.Floor((position.X+2) / _cellSize));
             var topY = Convert.ToInt32(Math.Floor((position.Y+2) / _cellSize));
-            var rightX = Convert.ToInt32(Math.Floor((position.X+30) / _cellSize));
-            var bottomY = Convert.ToInt32(Math.Floor((position.Y+30) / _cellSize));
+            var rightX = Convert.ToInt32(Math.Floor((position.X+_cellSize-2) / _cellSize));
+            var bottomY = Convert.ToInt32(Math.Floor((position.Y+_cellSize-2) / _cellSize));
             
             for (int i = topY; i <= bottomY; i++)
                 for (int j = leftX; j <= rightX; j++)
@@ -191,6 +191,24 @@ namespace BoomermanServer.Game
         {
             var pos = GetMapPos(powerup.GetPosition());
             map[pos.Item1][pos.Item2] = "pwu";
+        }
+
+        public bool IsPlayerOnPowerup(Position position)
+        {
+            var posLeftX = Convert.ToInt32(Math.Floor((position.X+2) / _cellSize));
+            var posTopY = Convert.ToInt32(Math.Floor((position.Y+2) / _cellSize));
+            var posRightX = Convert.ToInt32(Math.Floor((position.X+_cellSize-2) / _cellSize));
+            var posBottomY = Convert.ToInt32(Math.Floor((position.Y+_cellSize-2) / _cellSize));
+            if (posTopY == posBottomY && posLeftX == posRightX && map[posTopY][posLeftX] == "pwu")
+                return true;
+            return false;
+        }
+
+        public Position SnapPosition(Position position)
+        {
+            var posLeftX = Convert.ToInt32(Math.Floor((position.X+2) / _cellSize));
+            var posTopY = Convert.ToInt32(Math.Floor((position.Y+2) / _cellSize));
+            return new Position(posLeftX * _cellSize, posTopY * _cellSize);
         }
     }
 }
