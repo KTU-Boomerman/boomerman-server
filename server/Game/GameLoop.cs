@@ -13,12 +13,14 @@ namespace BoomermanServer.Game
         private readonly IHubContext<GameHub, IGameHub> _gameHub;
         private readonly MapManager _mapManager;
         private readonly IPlayerManager _playerManager;
+        private readonly PowerupManager _powerupManager;
 
-        public GameLoop(IHubContext<GameHub, IGameHub> gameHub, MapManager mapManager, IPlayerManager playerManager)
+        public GameLoop(IHubContext<GameHub, IGameHub> gameHub, MapManager mapManager, IPlayerManager playerManager, PowerupManager powerupManager)
         {
             _gameHub = gameHub;
             _mapManager = mapManager;
             _playerManager = playerManager;
+            _powerupManager = powerupManager;
         }
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,6 +36,11 @@ namespace BoomermanServer.Game
                         if (player.Lives > 0)
                             await _gameHub.Clients.All.UpdateLives(player.ID, --player.Lives);
                         RemoveImmoratality(player);
+                    }
+                    if (_mapManager.IsPlayerOnPowerup(player.Position))
+                    {
+                        await _powerupManager.ApplyPowerup(player.Position, player);
+                        await _gameHub.Clients.All.UpdateLives(player.ID, player.Lives);
                     }
                 }
                 

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using BoomermanServer.Data;
+using BoomermanServer.Game;
 
 namespace BoomermanServer.Hubs
 {
@@ -14,5 +15,7 @@ namespace BoomermanServer.Hubs
         Task Joined(PlayerDTO playerDto, PlayerDTO[] playersDto, GameStateDTO gameStateDto, MapDTO mapDto);
         Task PlayerJoin(PlayerDTO playerDto);
         Task UpdateLives(string playerId, int lives);
+        Task PlacePowerup(PowerupDTO toDto);
+        Task RemovePowerup(Position getPosition);
     }
 }
