@@ -16,6 +16,7 @@ namespace BoomermanServer.Hubs
         Task PlayerJoin(PlayerDTO playerDto);
         Task UpdateLives(string playerId, int lives);
         Task UpdateScore(string playerId, int score);
+        Task UpdateBombCount(string playerId, int count);
         Task PlacePowerup(PowerupDTO toDto);
         Task RemovePowerup(Position getPosition);
     }

@@ -157,26 +157,30 @@ namespace BoomermanServer.Hubs
             {
                 var bombType = bombDTO.BombType;
                 var bomb = _bombsPrototypes[bombType].Clone();
-                bomb.Owner = player;
-                var bombPosition = _mapManager.SnapBombPosition(player.Position);
-                bomb.SetPosition(bombPosition);
-                _bombManager.AddBomb(bomb);
-                await Clients.All.PlayerPlaceBomb(bomb.ToDTO());
-
-                // Change explosion strategy
-                IExplosionStrategy strategy = bombType switch
+                if (bomb.BombWeight <= player.MaxBombCount)
                 {
-                    BombType.Wave => new WaveExplosion(),
-                    BombType.Pulse => new PulseExplosion(),
-                    BombType.Boomerang => new BoomerangExplosion(),
-                    _ => new BasicExplosion(),
-                };
-                _explosionContext.SetStrategy(strategy);
+                    bomb.Owner = player;
+                    var bombPosition = _mapManager.SnapBombPosition(player.Position);
+                    bomb.SetPosition(bombPosition);
+                    _bombManager.AddBomb(bomb);
+                    await Clients.All.PlayerPlaceBomb(bomb.ToDTO());
+                    await Clients.All.UpdateBombCount(player.ID, _bombManager.GetPlayerBombCount(player));
 
-                // Enqueue explosions
-                var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2), player);
-                var filteredExplosions = _mapManager.FilterExplosions(explosions);
-                _explosionQueue.UnionWith(filteredExplosions.ToList());
+                    // Change explosion strategy
+                    IExplosionStrategy strategy = bombType switch
+                    {
+                        BombType.Wave => new WaveExplosion(),
+                        BombType.Pulse => new PulseExplosion(),
+                        BombType.Boomerang => new BoomerangExplosion(),
+                        _ => new BasicExplosion(),
+                    };
+                    _explosionContext.SetStrategy(strategy);
+
+                    // Enqueue explosions
+                    var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2), player);
+                    var filteredExplosions = _mapManager.FilterExplosions(explosions);
+                    _explosionQueue.UnionWith(filteredExplosions.ToList());
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BoomermanServer.Data;
 using BoomermanServer.Models.Bombs;
 
 namespace BoomermanServer.Game
@@ -20,7 +21,16 @@ namespace BoomermanServer.Game
 
         public int GetPlayerBombCount(Player player)
         {
-            return _bombs.Count(b => b.Owner.ID == player.ID);
+            return _bombs.Aggregate(0, (cnt, b) =>
+            {
+                if (b.Owner.ID == player.ID)
+                {
+                    return cnt + b.BombWeight;
+                }
+                
+                return cnt;
+            });
+            // return _bombs.Count(b => b.Owner.ID == player.ID);
         }
 
         public void RemoveBomb(Player player, Position position)
