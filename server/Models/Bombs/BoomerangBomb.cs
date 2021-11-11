@@ -12,6 +12,7 @@ namespace BoomermanServer.Models.Bombs
         public BoomerangBomb()
         {
             _bombType = BombType.Boomerang;
+            _bombWeight = 3;
         }
         public override void SetPosition(Position position)
         {

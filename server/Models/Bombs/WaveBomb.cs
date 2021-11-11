@@ -12,6 +12,7 @@ namespace BoomermanServer.Models.Bombs
         public WaveBomb()
         {
             _bombType = BombType.Wave;
+            _bombWeight = 3;
         }
 
         public override Bomb Clone()

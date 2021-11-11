@@ -12,6 +12,7 @@ namespace BoomermanServer.Models.Bombs
         public PulseBomb()
         {
             _bombType = BombType.Pulse;
+            _bombWeight = 2;
         }
         public override void SetPosition(Position position)
         {
