@@ -37,6 +37,7 @@ namespace BoomermanServer.Game
                             await _gameHub.Clients.All.UpdateLives(player.ID, --player.Lives);
                         RemoveImmoratality(player);
                     }
+                    
                     if (_mapManager.IsPlayerOnPowerup(player.Position))
                     {
                         await _powerupManager.ApplyPowerup(player.Position, player);

@@ -181,7 +181,7 @@ namespace BoomermanServer.Game
             return (Convert.ToInt32(Math.Floor(pos.Y / _cellSize)), Convert.ToInt32(Math.Floor(pos.X / _cellSize)));
         }
 
-        public bool CanPowerupSpawn(Position position)
+        public bool IsDestructible(Position position)
         {
             var pos = GetMapPos(position);
             return map[pos.Item1][pos.Item2] == "dew";

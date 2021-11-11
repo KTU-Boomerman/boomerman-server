@@ -18,9 +18,9 @@ namespace BoomermanServer.Patterns.Strategy
             _strategy = strategy;
         }
 
-        public Explosions GetExplosions(Position position, TimeSpan delay)
+        public Explosions GetExplosions(Position position, TimeSpan delay, Player owner)
         {
-            return _strategy.GetExplosions(position, delay);
+            return _strategy.GetExplosions(position, delay, owner);
         }
     }
 }

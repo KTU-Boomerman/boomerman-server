@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BoomermanServer.Hubs;
+using BoomermanServer.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 
@@ -34,7 +35,15 @@ namespace BoomermanServer.Game
                 foreach (var explosion in explosions)
                 {
                     _explosionQueue.Remove(explosion);
-                    var spawnItem = _mapManager.CanPowerupSpawn(explosion.Position);
+                    var spawnItem = _mapManager.IsDestructible(explosion.Position);
+
+                    if (_mapManager.IsDestructible(explosion.Position))
+                    {
+                        var player = explosion.Owner;
+                        player.Score += ActionScore.DestroyedWall;
+                        await _gameHub.Clients.All.UpdateScore(player.ID, player.Score);
+                    }
+                    
                     _mapManager.SetExplosion(explosion.Position);
                     Console.WriteLine($"Explosion at {explosion.Position.ToString()} on {DateTime.Now}");
                     RemoveExplosion(explosion.Position, spawnItem);

@@ -7,10 +7,10 @@ namespace BoomermanServer.Patterns.Strategy
 {
     public class BoomerangExplosion : IExplosionStrategy
     {
-        public Explosions GetExplosions(Position position, TimeSpan delay)
+        public Explosions GetExplosions(Position position, TimeSpan delay, Player owner)
         {
             var tile = Position.Tile;
-            var origin = new Explosion(position, delay); 
+            var origin = new Explosion(position, delay, owner); 
             var explosions = new Explosions(origin);
             var waveDelay = TimeSpan.FromMilliseconds(500);
             var newDelay = delay;
@@ -20,16 +20,16 @@ namespace BoomermanServer.Patterns.Strategy
                 newDelay = newDelay.Add(waveDelay);
 
                 // add explosion to the right
-                explosions.AddExplosion(new Explosion(new Position(position.X + tile.X * i, position.Y), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X + tile.X * i, position.Y), newDelay, owner));
 
                 // add explosion to the top
-                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y + tile.Y * i), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y + tile.Y * i), newDelay, owner));
 
                 // add explosion to the left
-                explosions.AddExplosion(new Explosion(new Position(position.X - tile.X * i, position.Y), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X - tile.X * i, position.Y), newDelay, owner));
 
                 // add explosion to the bottom
-                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y - tile.Y * i), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y - tile.Y * i), newDelay, owner));
             }
 			
             for (int i = 2; i > 0; --i)
@@ -37,20 +37,20 @@ namespace BoomermanServer.Patterns.Strategy
                 newDelay = newDelay.Add(waveDelay);
 
                 // add explosion to the right
-                explosions.AddExplosion(new Explosion(new Position(position.X + tile.X * i, position.Y), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X + tile.X * i, position.Y), newDelay, owner));
 
                 // add explosion to the top
-                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y + tile.Y * i), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y + tile.Y * i), newDelay, owner));
 
                 // add explosion to the left
-                explosions.AddExplosion(new Explosion(new Position(position.X - tile.X * i, position.Y), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X - tile.X * i, position.Y), newDelay, owner));
 
                 // add explosion to the bottom
-                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y - tile.Y * i), newDelay));
+                explosions.AddExplosion(new Explosion(new Position(position.X, position.Y - tile.Y * i), newDelay, owner));
             }
             newDelay = newDelay.Add(waveDelay);
 			
-            explosions.AddExplosion(new Explosion(new Position(position.X, position.Y), newDelay));
+            explosions.AddExplosion(new Explosion(new Position(position.X, position.Y), newDelay, owner));
 
             return explosions;
         }

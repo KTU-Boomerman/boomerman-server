@@ -11,6 +11,7 @@ namespace BoomermanServer.Game
 
         public int MaxBombCount { get; set; }
         public bool IsImmortal { get; set; }
+        public int _score;
 
         public Player(string id, Position position)
         {
@@ -19,6 +20,7 @@ namespace BoomermanServer.Game
             Speed = 1.0;
             Lives = 3;
             MaxBombCount = 1;
+            Score = 0;
         }
 
         public int Lives { 
@@ -32,6 +34,18 @@ namespace BoomermanServer.Game
                 };
             }
         }
+        
+        public int Score { 
+            get { return _score; }
+            set
+            {
+                _score = value switch {
+                    < 0 => 0,
+                    _ => value
+                };
+            }
+        }
+        
 
         public PlayerDTO ToDTO()
         {

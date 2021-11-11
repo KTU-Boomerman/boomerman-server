@@ -6,6 +6,6 @@ namespace BoomermanServer.Patterns.Strategy
 {
     public interface IExplosionStrategy
     {
-        Explosions GetExplosions(Position position, TimeSpan delay);
+        Explosions GetExplosions(Position position, TimeSpan delay, Player owner);
     }
 }

@@ -166,7 +166,7 @@ namespace BoomermanServer.Hubs
             _explosionContext.SetStrategy(strategy);
 
             // Enqueue explosions
-            var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2));
+            var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2), player);
             var filteredExplosions = _mapManager.FilterExplosions(explosions);
             _explosionQueue.UnionWith(filteredExplosions.ToList());
         }

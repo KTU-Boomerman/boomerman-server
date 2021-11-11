@@ -7,13 +7,13 @@ namespace BoomermanServer.Models
     {
         private Position _position;
         private DateTime _timeLeft;
-        private DateTime _spawnTime;
+        private Player _owner;
 
-        public Explosion(Position position, TimeSpan timeLeft)
+        public Explosion(Position position, TimeSpan timeLeft, Player owner)
         {
             _position = position;
             _timeLeft = DateTime.Now.Add(timeLeft);
-            _spawnTime = DateTime.Now;
+            _owner = owner;
         }
 
         public bool ShouldExplode()
@@ -22,6 +22,7 @@ namespace BoomermanServer.Models
         }
 
         public Position Position => _position;
+        public Player Owner => _owner;
 
         public int Compare(Explosion x, Explosion y)
         {
