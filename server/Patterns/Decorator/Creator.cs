@@ -1,8 +1,8 @@
 namespace BoomermanServer.Patterns.Decorator
 {
-    public abstract class Decorator
+    public abstract class Creator
     {
-        public Decorator Component { get; set; }
+        public Creator Component { get; set; }
         public abstract void Execute();
     }
 }

@@ -7,6 +7,7 @@ namespace BoomermanServer.Models.Bombs
     [Serializable]
     public abstract class Bomb : IDataTransferable<BombDTO>
     {
+
         protected Position _position;
         protected BombType _bombType;
         public abstract void Explode();
@@ -27,7 +28,7 @@ namespace BoomermanServer.Models.Bombs
 
         public override bool Equals(object obj)
         {
-            if(obj is Bomb)
+            if (obj is Bomb)
             {
                 var bomb = obj as Bomb;
                 return bomb._bombType == _bombType && bomb._position.Equals(_position);
