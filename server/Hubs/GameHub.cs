@@ -149,6 +149,10 @@ namespace BoomermanServer.Hubs
         {
             // Place bomb
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
+
+            if (player.Lives <= 0)
+                return;
+
             if (_bombManager.GetPlayerBombCount(player) < player.MaxBombCount)
             {
                 var bombType = bombDTO.BombType;

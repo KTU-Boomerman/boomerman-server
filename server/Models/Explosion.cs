@@ -8,6 +8,7 @@ namespace BoomermanServer.Models
         private Position _position;
         private DateTime _timeLeft;
         private Player _owner;
+        private bool _exploded;
 
         public Explosion(Position position, TimeSpan timeLeft, Player owner)
         {
@@ -23,6 +24,12 @@ namespace BoomermanServer.Models
 
         public Position Position => _position;
         public Player Owner => _owner;
+
+        public bool Exploded
+        {
+            get { return _exploded; }
+            set { _exploded = value; }
+        }
 
         public int Compare(Explosion x, Explosion y)
         {

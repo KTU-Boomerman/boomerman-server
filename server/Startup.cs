@@ -22,7 +22,6 @@ namespace BoomermanServer
             services.AddSingleton<BombManager>();
 
             services.AddHostedService<GameLoop>();
-            services.AddHostedService<ExplosionBroadcaster>();
             
             services.AddCors();
             services.AddSignalR();

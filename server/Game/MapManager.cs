@@ -171,6 +171,21 @@ namespace BoomermanServer.Game
 
             return false;
         }
+        
+        public Position GetExplosionPosition(Position position)
+        {
+            var leftX = Convert.ToInt32(Math.Floor((position.X+2) / _cellSize));
+            var topY = Convert.ToInt32(Math.Floor((position.Y+2) / _cellSize));
+            var rightX = Convert.ToInt32(Math.Floor((position.X+_cellSize-2) / _cellSize));
+            var bottomY = Convert.ToInt32(Math.Floor((position.Y+_cellSize-2) / _cellSize));
+            
+            for (int i = topY; i <= bottomY; i++)
+                for (int j = leftX; j <= rightX; j++)
+                    if (map[i][j] == "exp")
+                        return new Position(j*_cellSize, i*_cellSize);
+
+            return null;
+        }
 
         /// <summary>
         /// Returns id's to interact with map. Returns Item1 - Y; Item2 - X
