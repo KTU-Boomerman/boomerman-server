@@ -176,7 +176,7 @@ namespace BoomermanServer.Hubs
             var gameNotification = new GameNotifcation(this);
             var discordNotification = new DiscordNotification(_discordApi);
 
-            gameNotifcation.Send(title, message);
+            gameNotification.Send(title, message);
             discordNotification.Send(title, message);
         }
     }
