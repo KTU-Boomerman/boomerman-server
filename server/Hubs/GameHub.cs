@@ -7,6 +7,7 @@ using BoomermanServer.Game;
 using BoomermanServer.Models;
 using BoomermanServer.Models.Bombs;
 using BoomermanServer.Patterns.Adapter;
+using BoomermanServer.Patterns.Command;
 using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
 using BoomermanServer.Patterns.Strategy;
@@ -29,6 +30,7 @@ namespace BoomermanServer.Hubs
 	*/
     public class GameHub : Hub<IGameHub>
     {
+
         private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
         private readonly MapManager _mapManager;
@@ -55,19 +57,19 @@ namespace BoomermanServer.Hubs
 
         private void InitializeBombsDictionary()
         {
-            var regularDecorator = new BombDecorator(BombType.Regular);
+            var regularCreator = new BombCreator(BombType.Regular);
 
-            var waveDecorator = new BombDecorator(BombType.Wave);
-            waveDecorator.Component = regularDecorator;
+            var waveDecorator = new BombCreator(BombType.Wave);
+            waveDecorator.Component = regularCreator;
 
-            var pulseDecorator = new BombDecorator(BombType.Pulse);
-            pulseDecorator.Component = waveDecorator;
+            var pulseCreator = new BombCreator(BombType.Pulse);
+            pulseCreator.Component = waveDecorator;
 
-            var boomerangDecorator = new BombDecorator(BombType.Boomerang);
-            boomerangDecorator.Component = pulseDecorator;
-            
-            boomerangDecorator.Execute();
-            _bombs = boomerangDecorator.Bombs;
+            var boomerangCreator = new BombCreator(BombType.Boomerang);
+            boomerangCreator.Component = pulseCreator;
+
+            boomerangCreator.Execute();
+            _bombs = boomerangCreator.Bombs;
         }
 
         public async Task PlayerJoin()
@@ -97,7 +99,12 @@ namespace BoomermanServer.Hubs
 
             if (_managerFacade.GetPlayerCount() >= _managerFacade.GetMinPlayers())
             {
+                var command = new ImmortalitySetter(_managerFacade.GetPlayers());
+                command.SetAttributes();
+
                 _managerFacade.StartGame();
+
+                command.Undo();
                 await ChangeGameState();
             }
         }
@@ -147,7 +154,7 @@ namespace BoomermanServer.Hubs
             var bombPosition = _mapManager.SnapBombPosition(player.Position);
             bomb.SetPosition(bombPosition);
             await Clients.All.PlayerPlaceBomb(bomb.ToDTO());
-            
+
             // Change explosion strategy
             IExplosionStrategy strategy = bombType switch
             {
@@ -169,8 +176,8 @@ namespace BoomermanServer.Hubs
             var gameNotification = new GameNotifcation(this);
             var discordNotification = new DiscordNotification(_discordApi);
 
-            gameNotification.Send(title, message);
-            discordNotification.Send(title, message);            
+            gameNotifcation.Send(title, message);
+            discordNotification.Send(title, message);
         }
     }
 }
