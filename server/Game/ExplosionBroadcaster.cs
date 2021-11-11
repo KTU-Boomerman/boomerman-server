@@ -15,15 +15,17 @@ namespace BoomermanServer.Game
         private readonly IHubContext<GameHub, IGameHub> _gameHub;
         private readonly MapManager _mapManager;
         private readonly PowerupManager _powerupManager;
+        private readonly BombManager _bombManager;
         private IExplosionQueue _explosionQueue;
 
         public ExplosionBroadcaster(IHubContext<GameHub, IGameHub> gameHub, IExplosionQueue explosionQueue, MapManager mapManager,
-                                    PowerupManager powerupManager)
+                                    PowerupManager powerupManager, BombManager bombManager)
         {
             _gameHub = gameHub;
             _mapManager = mapManager;
             _explosionQueue = explosionQueue;
             _powerupManager = powerupManager;
+            _bombManager = bombManager;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -37,6 +39,7 @@ namespace BoomermanServer.Game
                     _explosionQueue.Remove(explosion);
                     var spawnItem = _mapManager.IsDestructible(explosion.Position);
 
+                    _bombManager.RemoveBomb(explosion.Owner, explosion.Position);
                     if (_mapManager.IsDestructible(explosion.Position))
                     {
                         var player = explosion.Owner;

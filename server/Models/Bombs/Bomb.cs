@@ -10,12 +10,20 @@ namespace BoomermanServer.Models.Bombs
 
         protected Position _position;
         protected BombType _bombType;
+
+        private Player _owner;
         public abstract void Explode();
         public abstract void SetPosition(Position position);
         public abstract Bomb Clone();
         public abstract Bomb DeepClone();
 
         public Position Position => _position;
+
+        public Player Owner
+        {
+            get => _owner;
+            set => _owner = value;
+        }
 
         public BombDTO ToDTO()
         {

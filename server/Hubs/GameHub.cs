@@ -34,20 +34,20 @@ namespace BoomermanServer.Hubs
         private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
         private readonly MapManager _mapManager;
-        private readonly PowerupManager _powerupManager;
-        private Dictionary<BombType, Bomb> _bombs;
+        private readonly BombManager _bombManager;
+        private Dictionary<BombType, Bomb> _bombsPrototypes;
 
         private IExplosionQueue _explosionQueue;
         private ExplosionContext _explosionContext;
 
         private DiscordApi _discordApi;
 
-        public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, PowerupManager powerupManager)
+        public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, BombManager bombManager)
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager);
             _pendingExplosions = new Queue<Explosion>();
             _mapManager = mapManager;
-            _powerupManager = powerupManager;
+            _bombManager = bombManager;
             _explosionQueue = explosionQueue;
             InitializeBombsDictionary();
             _explosionContext = new ExplosionContext(new BasicExplosion());
@@ -69,7 +69,7 @@ namespace BoomermanServer.Hubs
             boomerangCreator.Component = pulseCreator;
 
             boomerangCreator.Execute();
-            _bombs = boomerangCreator.Bombs;
+            _bombsPrototypes = boomerangCreator.Bombs;
         }
 
         public async Task PlayerJoin()
@@ -149,26 +149,31 @@ namespace BoomermanServer.Hubs
         {
             // Place bomb
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
-            var bombType = bombDTO.BombType;
-            var bomb = _bombs[bombType].Clone();
-            var bombPosition = _mapManager.SnapBombPosition(player.Position);
-            bomb.SetPosition(bombPosition);
-            await Clients.All.PlayerPlaceBomb(bomb.ToDTO());
-
-            // Change explosion strategy
-            IExplosionStrategy strategy = bombType switch
+            if (_bombManager.GetPlayerBombCount(player) < player.MaxBombCount)
             {
-                BombType.Wave => new WaveExplosion(),
-                BombType.Pulse => new PulseExplosion(),
-                BombType.Boomerang => new BoomerangExplosion(),
-                _ => new BasicExplosion(),
-            };
-            _explosionContext.SetStrategy(strategy);
+                var bombType = bombDTO.BombType;
+                var bomb = _bombsPrototypes[bombType].Clone();
+                bomb.Owner = player;
+                var bombPosition = _mapManager.SnapBombPosition(player.Position);
+                bomb.SetPosition(bombPosition);
+                _bombManager.AddBomb(bomb);
+                await Clients.All.PlayerPlaceBomb(bomb.ToDTO());
 
-            // Enqueue explosions
-            var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2), player);
-            var filteredExplosions = _mapManager.FilterExplosions(explosions);
-            _explosionQueue.UnionWith(filteredExplosions.ToList());
+                // Change explosion strategy
+                IExplosionStrategy strategy = bombType switch
+                {
+                    BombType.Wave => new WaveExplosion(),
+                    BombType.Pulse => new PulseExplosion(),
+                    BombType.Boomerang => new BoomerangExplosion(),
+                    _ => new BasicExplosion(),
+                };
+                _explosionContext.SetStrategy(strategy);
+
+                // Enqueue explosions
+                var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2), player);
+                var filteredExplosions = _mapManager.FilterExplosions(explosions);
+                _explosionQueue.UnionWith(filteredExplosions.ToList());
+            }
         }
 
         private void SendNotification(string title, string message)
