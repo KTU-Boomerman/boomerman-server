@@ -7,6 +7,7 @@ using BoomermanServer.Game;
 using BoomermanServer.Models;
 using BoomermanServer.Models.Bombs;
 using BoomermanServer.Patterns.Adapter;
+using BoomermanServer.Patterns.Command;
 using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
 using BoomermanServer.Patterns.Strategy;
@@ -96,7 +97,12 @@ namespace BoomermanServer.Hubs
 
             if (_managerFacade.GetPlayerCount() >= _managerFacade.GetMinPlayers())
             {
+                var command = new ImmortalitySetter(_managerFacade.GetPlayers());
+                command.SetAttributes();
+
                 _managerFacade.StartGame();
+
+                command.Undo();
                 await ChangeGameState();
             }
         }
