@@ -94,6 +94,8 @@ namespace BoomermanServer.Hubs
             };
 
             await Clients.Caller.Joined(playerDto, playersDto, gameStateDto, mapDTO);
+            await Clients.All.UpdateBombCount(playerDto.ID, 1);
+
 
             SendNotification("New player!", "Player has joined the game");
 
@@ -153,7 +155,7 @@ namespace BoomermanServer.Hubs
             if (player.Lives <= 0)
                 return;
 
-            if (_bombManager.GetPlayerBombCount(player) < player.MaxBombCount)
+            if (_bombManager.GetPlayerActiveBombCount(player) < player.MaxBombCount)
             {
                 var bombType = bombDTO.BombType;
                 var bomb = _bombsPrototypes[bombType].Clone();

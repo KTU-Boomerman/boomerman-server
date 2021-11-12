@@ -19,7 +19,7 @@ namespace BoomermanServer.Game
             _bombs.Add(bomb);
         }
 
-        public int GetPlayerBombCount(Player player)
+        public int GetPlayerActiveBombCount(Player player)
         {
             return _bombs.Aggregate(0, (cnt, b) =>
             {
@@ -31,6 +31,11 @@ namespace BoomermanServer.Game
                 return cnt;
             });
             // return _bombs.Count(b => b.Owner.ID == player.ID);
+        }
+
+        public int GetPlayerBombCount(Player player)
+        {
+            return player.MaxBombCount - GetPlayerActiveBombCount(player);
         }
 
         public void RemoveBomb(Player player, Position position)

@@ -63,6 +63,8 @@ namespace BoomermanServer.Game
                 var spawnItem = _mapManager.IsDestructible(explosion.Position);
 
                 _bombManager.RemoveBomb(explosion.Owner, explosion.Position);
+                await _gameHub.Clients.All.UpdateBombCount(explosion.Owner.ID, _bombManager.GetPlayerBombCount(explosion.Owner));
+
                 if (_mapManager.IsDestructible(explosion.Position))
                 {
                     var player = explosion.Owner;
