@@ -10,6 +10,7 @@ using BoomermanServer.Patterns.Adapter;
 using BoomermanServer.Patterns.Command;
 using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
+using BoomermanServer.Patterns.Iterator;
 using BoomermanServer.Patterns.Strategy;
 using Microsoft.AspNetCore.SignalR;
 
@@ -101,7 +102,8 @@ namespace BoomermanServer.Hubs
 
             if (_managerFacade.GetPlayerCount() >= _managerFacade.GetMinPlayers())
             {
-                var command = new ImmortalitySetter(_managerFacade.GetPlayers());
+                var players = new PlayerContainer(_managerFacade.GetPlayers());
+                var command = new ImmortalitySetter(players);
                 command.SetAttributes();
 
                 _managerFacade.StartGame();
@@ -109,6 +111,11 @@ namespace BoomermanServer.Hubs
                 command.Undo();
                 await ChangeGameState();
             }
+        }
+
+        private object PlayerContainer()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task PlayerLeave()
@@ -184,6 +191,18 @@ namespace BoomermanServer.Hubs
                     _explosionQueue.UnionWith(filteredExplosions.ToList());
                 }
             }
+        }
+
+        public async Task ChangePlayerColor()
+        {
+            var player = _managerFacade.GetPlayer(Context.ConnectionId);
+            var colorIterator = player.ColorPalette.GetIterator();
+            colorIterator.Next();
+            var colorDto = new PlayerColorDTO
+            {
+                Color = (PlayerColor)colorIterator.CurrentItem()
+            };
+            await Clients.Others.PlayerChangeColor(Context.ConnectionId, colorDto);
         }
 
         private void SendNotification(string title, string message)
