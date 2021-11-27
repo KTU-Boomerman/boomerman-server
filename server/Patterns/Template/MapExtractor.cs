@@ -5,7 +5,7 @@ using BoomermanServer.Patterns.Facade;
 
 namespace BoomermanServer.Patterns.Template
 {
-    public class MapExtractor : DtoExtractor
+    public sealed class MapExtractor : DtoExtractor
     {
         public MapExtractor(ManagerFacade facade)
             : base(facade) { }
