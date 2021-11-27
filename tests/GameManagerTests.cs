@@ -10,7 +10,7 @@ namespace tests
         public void MinPlayers()
         {
             var manager = new GameManager();
-            var facade = new ManagerFacade(manager, null);
+            var facade = new ManagerFacade(manager, null, null);
             Assert.Equal(1, facade.GetMinPlayers());
         }
 
@@ -18,7 +18,7 @@ namespace tests
         public void GameInProgress()
         {
             var manager = new GameManager();
-            var facade = new ManagerFacade(manager, null);
+            var facade = new ManagerFacade(manager, null, null);
             facade.StartGame();
             Assert.Equal(GameState.GameInProgress, facade.GameState);
         }
