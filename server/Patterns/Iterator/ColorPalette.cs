@@ -5,7 +5,6 @@ namespace BoomermanServer.Patterns.Iterator
     public class ColorPalette
     {
         private PlayerColor[] colors;
-        private int current = 0;
 
         public ColorPalette()
         {
