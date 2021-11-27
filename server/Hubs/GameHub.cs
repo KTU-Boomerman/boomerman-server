@@ -12,6 +12,7 @@ using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
 using BoomermanServer.Patterns.Iterator;
 using BoomermanServer.Patterns.Strategy;
+using BoomermanServer.Patterns.Template;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BoomermanServer.Hubs
@@ -146,10 +147,8 @@ namespace BoomermanServer.Hubs
 
         private async Task ChangeGameState()
         {
-            var gameStateDto = new GameStateDTO
-            {
-                GameState = _managerFacade.GameState.ToString(),
-            };
+            var dtoExtractor = new GameStateExtractor(_managerFacade);
+            var gameStateDto = dtoExtractor.Extract() as GameStateDTO;
 
             await Clients.All.GameStateChange(gameStateDto);
         }
