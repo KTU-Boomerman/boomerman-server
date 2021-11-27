@@ -10,7 +10,7 @@ namespace BoomermanServer.Data
         Red,
         [EnumMember(Value = "Green")]
         Green,
-        [EnumMember(Value = "Bluee")]
+        [EnumMember(Value = "Blue")]
         Blue
     }
 }
