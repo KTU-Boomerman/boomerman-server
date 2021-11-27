@@ -7,6 +7,7 @@ using BoomermanServer.Game;
 using BoomermanServer.Models;
 using BoomermanServer.Models.Bombs;
 using BoomermanServer.Patterns.Adapter;
+using BoomermanServer.Patterns.ChainOfResponsibility;
 using BoomermanServer.Patterns.Command;
 using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
@@ -43,6 +44,7 @@ namespace BoomermanServer.Hubs
         private ExplosionContext _explosionContext;
 
         private DiscordApi _discordApi;
+        private ChatHandler _chatHandler;
 
         public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, BombManager bombManager)
         {
@@ -55,6 +57,7 @@ namespace BoomermanServer.Hubs
             _explosionContext = new ExplosionContext(new BasicExplosion());
 
             _discordApi = new DiscordApi();
+            _chatHandler = new ChatHandler(playerManager);
         }
 
         private void InitializeBombsDictionary()
@@ -102,12 +105,12 @@ namespace BoomermanServer.Hubs
             if (_managerFacade.GetPlayerCount() >= _managerFacade.GetMinPlayers())
             {
                 var players = new PlayerContainer(_managerFacade.GetPlayers());
-                var command = new ImmortalitySetter(players);
-                command.SetAttributes();
+                // var command = new ImmortalitySetter(players);
+                // command.SetAttributes();
 
                 _managerFacade.StartGame();
 
-                command.Undo();
+                // command.Undo();
                 await ChangeGameState();
             }
         }
@@ -209,6 +212,19 @@ namespace BoomermanServer.Hubs
 
             gameNotification.Send(title, message);
             discordNotification.Send(title, message);
+        }
+
+        public async Task SendMessage(string text)
+        {
+            var player = _managerFacade.GetPlayer(Context.ConnectionId);
+
+            var message = new Message {
+                PlayerID = player.ID,
+                PlayerName = player.Name,
+                Text = text,
+            };
+            var handledMessage = _chatHandler.Handle(message);
+            await Clients.All.SendMessage(player.ID, player.Name, handledMessage.Text);
         }
     }
 }

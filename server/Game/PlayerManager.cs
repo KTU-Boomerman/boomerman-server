@@ -22,6 +22,10 @@ namespace BoomermanServer.Game
         public Player AddPlayer(string id)
         {
             lock(Players) {
+                if (Players.ContainsKey(id)) {
+                    return Players[id];
+                }
+
                 Position spawnPoint = getRandomSpawnPoint();
                 Player player = new Player(id, spawnPoint);
 
