@@ -12,6 +12,7 @@ using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
 using BoomermanServer.Patterns.Iterator;
 using BoomermanServer.Patterns.Strategy;
+using BoomermanServer.Patterns.Template;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BoomermanServer.Hubs
@@ -34,7 +35,7 @@ namespace BoomermanServer.Hubs
 
         private readonly ManagerFacade _managerFacade;
         private readonly Queue<Explosion> _pendingExplosions;
-        private readonly MapManager _mapManager;
+        //private readonly MapManager _mapManager;
         private readonly BombManager _bombManager;
         private Dictionary<BombType, Bomb> _bombsPrototypes;
 
@@ -45,9 +46,9 @@ namespace BoomermanServer.Hubs
 
         public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, BombManager bombManager)
         {
-            _managerFacade = new ManagerFacade(gameManager, playerManager);
+            _managerFacade = new ManagerFacade(gameManager, playerManager, mapManager);
             _pendingExplosions = new Queue<Explosion>();
-            _mapManager = mapManager;
+            //_mapManager = mapManager;
             _bombManager = bombManager;
             _explosionQueue = explosionQueue;
             InitializeBombsDictionary();
@@ -89,10 +90,8 @@ namespace BoomermanServer.Hubs
                 GameState = _managerFacade.GameState.ToString(),
             };
 
-            var mapDTO = new MapDTO
-            {
-                Walls = _mapManager.GetDestructibleWalls(),
-            };
+            var mapExtractor = new MapExtractor(_managerFacade);
+            var mapDTO = mapExtractor.Extract() as MapDTO;
 
             await Clients.Caller.Joined(playerDto, playersDto, gameStateDto, mapDTO);
             await Clients.All.UpdateBombCount(playerDto.ID, 1);
@@ -136,7 +135,7 @@ namespace BoomermanServer.Hubs
                 return _managerFacade.GetPlayer(Context.ConnectionId).Position.ToDTO();
             }
 
-            var currentPosition = _mapManager.CheckCollision(new Position(originalPosition), new Position(newPosition));
+            var currentPosition = _managerFacade.CheckCollision(new Position(originalPosition), new Position(newPosition));
 
             _managerFacade.MovePlayer(Context.ConnectionId, currentPosition);
             await Clients.Others.PlayerMove(Context.ConnectionId, currentPosition.ToDTO());
@@ -146,10 +145,8 @@ namespace BoomermanServer.Hubs
 
         private async Task ChangeGameState()
         {
-            var gameStateDto = new GameStateDTO
-            {
-                GameState = _managerFacade.GameState.ToString(),
-            };
+            var dtoExtractor = new GameStateExtractor(_managerFacade);
+            var gameStateDto = dtoExtractor.Extract() as GameStateDTO;
 
             await Clients.All.GameStateChange(gameStateDto);
         }
@@ -169,7 +166,7 @@ namespace BoomermanServer.Hubs
                 if (bomb.BombWeight <= player.MaxBombCount)
                 {
                     bomb.Owner = player;
-                    var bombPosition = _mapManager.SnapBombPosition(player.Position);
+                    var bombPosition = _managerFacade.SnapBombPosition(player.Position);
                     bomb.SetPosition(bombPosition);
                     _bombManager.AddBomb(bomb);
                     await Clients.All.PlayerPlaceBomb(bomb.ToDTO());
@@ -187,7 +184,7 @@ namespace BoomermanServer.Hubs
 
                     // Enqueue explosions
                     var explosions = _explosionContext.GetExplosions(bombPosition, TimeSpan.FromSeconds(2), player);
-                    var filteredExplosions = _mapManager.FilterExplosions(explosions);
+                    var filteredExplosions = _managerFacade.FilterExplosions(explosions);
                     _explosionQueue.UnionWith(filteredExplosions.ToList());
                 }
             }

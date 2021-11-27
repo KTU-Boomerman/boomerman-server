@@ -12,7 +12,7 @@ namespace tests
         public void AddPlayer()
         {
             var manager = new PlayerManager();
-            var facade = new ManagerFacade(null, manager);
+            var facade = new ManagerFacade(null, manager, null);
             var countBefore = facade.GetPlayerCount();
             facade.AddPlayer(_id);
             Assert.True(countBefore < facade.GetPlayerCount());
@@ -22,7 +22,7 @@ namespace tests
         public void GetPlayer()
         {
             var manager = new PlayerManager();
-            var facade = new ManagerFacade(null, manager);
+            var facade = new ManagerFacade(null, manager, null);
             facade.AddPlayer(_id);
             var player = facade.GetPlayer(_id);
             Assert.NotNull(player);
@@ -32,7 +32,7 @@ namespace tests
         public void GetPlayerList()
         {
             var manager = new PlayerManager();
-            var facade = new ManagerFacade(null, manager);
+            var facade = new ManagerFacade(null, manager, null);
             var list = facade.GetPlayers();
             Assert.NotNull(list);
         }
@@ -41,7 +41,7 @@ namespace tests
         public void MovePlayer()
         {
             var manager = new PlayerManager();
-            var facade = new ManagerFacade(null, manager);
+            var facade = new ManagerFacade(null, manager, null);
             facade.AddPlayer(_id);
             var player = facade.GetPlayer(_id);
             var position = player.Position;
@@ -53,7 +53,7 @@ namespace tests
         public void RemovePlayer()
         {
             var manager = new PlayerManager();
-            var facade = new ManagerFacade(null, manager);
+            var facade = new ManagerFacade(null, manager, null);
             facade.AddPlayer(_id);
             var countBefore = facade.GetPlayerCount();
             facade.RemovePlayer(_id);
