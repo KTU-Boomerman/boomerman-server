@@ -1,4 +1,5 @@
 using BoomermanServer.Data;
+using BoomermanServer.Patterns.Iterator;
 
 namespace BoomermanServer.Game
 {
@@ -12,6 +13,7 @@ namespace BoomermanServer.Game
         public int MaxBombCount { get; set; }
         public bool IsImmortal { get; set; }
         public int _score;
+        public ColorPalette ColorPalette { get; set; }
 
         public Player(string id, Position position)
         {
@@ -21,31 +23,36 @@ namespace BoomermanServer.Game
             Lives = 3;
             MaxBombCount = 1;
             Score = 0;
+            ColorPalette = new ColorPalette();
         }
 
-        public int Lives { 
+        public int Lives
+        {
             get { return _lives; }
             set
             {
-                _lives = value switch {
+                _lives = value switch
+                {
                     > 3 => 3,
                     < 0 => 0,
                     _ => value
                 };
             }
         }
-        
-        public int Score { 
+
+        public int Score
+        {
             get { return _score; }
             set
             {
-                _score = value switch {
+                _score = value switch
+                {
                     < 0 => 0,
                     _ => value
                 };
             }
         }
-        
+
 
         public PlayerDTO ToDTO()
         {

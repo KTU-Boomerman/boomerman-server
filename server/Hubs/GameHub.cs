@@ -186,6 +186,18 @@ namespace BoomermanServer.Hubs
             }
         }
 
+        public async Task ChangePlayerColor()
+        {
+            var player = _managerFacade.GetPlayer(Context.ConnectionId);
+            var colorIterator = player.ColorPalette.GetIterator();
+            colorIterator.Next();
+            var colorDto = new PlayerColorDTO
+            {
+                Color = (PlayerColor)colorIterator.CurrentItem()
+            };
+            await Clients.Others.PlayerChangeColor(Context.ConnectionId, colorDto);
+        }
+
         private void SendNotification(string title, string message)
         {
             var gameNotification = new GameNotifcation(this);
