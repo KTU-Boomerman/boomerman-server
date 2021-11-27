@@ -90,10 +90,8 @@ namespace BoomermanServer.Hubs
                 GameState = _managerFacade.GameState.ToString(),
             };
 
-            var mapDTO = new MapDTO
-            {
-                Walls = _managerFacade.GetDestructibleWalls(),
-            };
+            var mapExtractor = new MapExtractor(_managerFacade);
+            var mapDTO = mapExtractor.Extract() as MapDTO;
 
             await Clients.Caller.Joined(playerDto, playersDto, gameStateDto, mapDTO);
             await Clients.All.UpdateBombCount(playerDto.ID, 1);
