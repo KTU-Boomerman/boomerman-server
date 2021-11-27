@@ -1,26 +1,32 @@
-using System.Collections.Generic;
 using BoomermanServer.Game;
+using BoomermanServer.Patterns.Iterator;
 
 namespace BoomermanServer.Patterns.Command
 {
     public class ImmortalitySetter : OnBeginAttributeSetter
     {
-        public ImmortalitySetter(List<Player> players)
+        public ImmortalitySetter(PlayerContainer players)
             : base(players) { }
 
         public override void SetAttributes()
         {
-            foreach (var player in _players)
+            var iterator = _players.GetIterator();
+            while (!iterator.IsDone())
             {
+                var player = iterator.CurrentItem() as Player;
                 player.IsImmortal = true;
+                iterator.Next();
             }
         }
 
         public override void Undo()
         {
-            foreach (var player in _players)
+            var iterator = _players.GetIterator();
+            while (!iterator.IsDone())
             {
+                var player = iterator.CurrentItem() as Player;
                 player.IsImmortal = false;
+                iterator.Next();
             }
         }
     }

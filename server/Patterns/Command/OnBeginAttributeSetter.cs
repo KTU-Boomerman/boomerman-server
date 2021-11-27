@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using BoomermanServer.Game;
+using BoomermanServer.Patterns.Iterator;
 
 namespace BoomermanServer.Patterns.Command
 {
     public abstract class OnBeginAttributeSetter
     {
-        protected List<Player> _players;
+        protected PlayerContainer _players;
 
-        public OnBeginAttributeSetter(List<Player> players)
+        public OnBeginAttributeSetter(PlayerContainer players)
         {
             _players = players;
         }

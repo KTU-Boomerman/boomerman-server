@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BoomermanServer.Game;
 using BoomermanServer.Patterns.Command;
+using BoomermanServer.Patterns.Iterator;
 using Xunit;
 
 namespace tests
@@ -17,7 +18,8 @@ namespace tests
             var player2 = new Player("B", new Position(0, 0));
             players.Add(player1);
             players.Add(player2);
-            _immortalitySetter = new ImmortalitySetter(players);
+            var playerContainer = new PlayerContainer(players);
+            _immortalitySetter = new ImmortalitySetter(playerContainer);
         }
 
         [Fact]
