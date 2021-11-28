@@ -36,18 +36,12 @@ namespace BoomermanServer.Patterns.Iterator
 
             public object Next()
             {
-                lock(colorLock) 
+                PlayerColor color = colorPalette.colors[current++];
+                if (current >= colorPalette.colors.Length)
                 {
-                    Console.WriteLine(current);
-                    PlayerColor color = colorPalette.colors[current++];
-                    Console.WriteLine(current);
-                    Console.WriteLine(color);
-                    if (current >= colorPalette.colors.Length)
-                    {
-                        current = 0;
-                    }
-                    return color;
+                    current = 0;
                 }
+                return color;
             }
 
             public bool IsDone()

@@ -46,14 +46,13 @@ namespace BoomermanServer.Hubs
         private DiscordApi _discordApi;
         private ChatHandler _chatHandler;
 
-        private Dictionary<string, IIterator> _playerColorIterators;
+        private static Dictionary<string, IIterator> _playerColorIterators = new Dictionary<string, IIterator>();
         private IIterator _playerColorIterator;
 
         public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, BombManager bombManager)
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager, mapManager);
             _pendingExplosions = new Queue<Explosion>();
-            //_mapManager = mapManager;
             _bombManager = bombManager;
             _explosionQueue = explosionQueue;
             InitializeBombsDictionary();
@@ -61,8 +60,6 @@ namespace BoomermanServer.Hubs
 
             _discordApi = new DiscordApi();
             _chatHandler = new ChatHandler(playerManager);
-
-            _playerColorIterators = new Dictionary<string, IIterator>();
 
             _playerColorIterator = new ColorPalette().GetIterator();
         }
@@ -203,9 +200,7 @@ namespace BoomermanServer.Hubs
         public async Task ChangePlayerColor()
         {
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
-            var colorIterator = _playerColorIterator;
-            // Console.WriteLine(colorIterator.Next());
-            // Console.WriteLine(colorIterator.CurrentItem());
+            var colorIterator = GetPlayerColorIterator(player.ID);
             var colorDto = new PlayerColorDTO
             {
                 Color = (PlayerColor)colorIterator.Next()
@@ -220,7 +215,6 @@ namespace BoomermanServer.Hubs
                 var player = _managerFacade.GetPlayer(playerId);
                 _playerColorIterators.Add(playerId, player.ColorPalette.GetIterator());
             }
-
             return _playerColorIterators[playerId];
         }
 
@@ -237,7 +231,8 @@ namespace BoomermanServer.Hubs
         {
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
 
-            var message = new Message {
+            var message = new Message
+            {
                 PlayerID = player.ID,
                 PlayerName = player.Name,
                 Text = text,
