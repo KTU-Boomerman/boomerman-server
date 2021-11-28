@@ -1,3 +1,4 @@
+using System;
 using BoomermanServer.Data;
 
 namespace BoomermanServer.Patterns.Iterator
@@ -19,11 +20,13 @@ namespace BoomermanServer.Patterns.Iterator
         private class ColorIterator : IIterator
         {
             private ColorPalette colorPalette;
-            private int current = 0;
+            private int current;
+            private readonly object colorLock = new object();
 
             public ColorIterator(ColorPalette colorPalette)
             {
                 this.colorPalette = colorPalette;
+                this.current = 0;
             }
 
             public object First()
@@ -33,12 +36,18 @@ namespace BoomermanServer.Patterns.Iterator
 
             public object Next()
             {
-                PlayerColor color = colorPalette.colors[current++];
-                if (current >= colorPalette.colors.Length)
+                lock(colorLock) 
                 {
-                    current = 0;
+                    Console.WriteLine(current);
+                    PlayerColor color = colorPalette.colors[current++];
+                    Console.WriteLine(current);
+                    Console.WriteLine(color);
+                    if (current >= colorPalette.colors.Length)
+                    {
+                        current = 0;
+                    }
+                    return color;
                 }
-                return color;
             }
 
             public bool IsDone()

@@ -46,6 +46,9 @@ namespace BoomermanServer.Hubs
         private DiscordApi _discordApi;
         private ChatHandler _chatHandler;
 
+        private Dictionary<string, IIterator> _playerColorIterators;
+        private IIterator _playerColorIterator;
+
         public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, BombManager bombManager)
         {
             _managerFacade = new ManagerFacade(gameManager, playerManager, mapManager);
@@ -58,6 +61,10 @@ namespace BoomermanServer.Hubs
 
             _discordApi = new DiscordApi();
             _chatHandler = new ChatHandler(playerManager);
+
+            _playerColorIterators = new Dictionary<string, IIterator>();
+
+            _playerColorIterator = new ColorPalette().GetIterator();
         }
 
         private void InitializeBombsDictionary()
@@ -196,13 +203,25 @@ namespace BoomermanServer.Hubs
         public async Task ChangePlayerColor()
         {
             var player = _managerFacade.GetPlayer(Context.ConnectionId);
-            var colorIterator = player.ColorPalette.GetIterator();
-            colorIterator.Next();
+            var colorIterator = _playerColorIterator;
+            // Console.WriteLine(colorIterator.Next());
+            // Console.WriteLine(colorIterator.CurrentItem());
             var colorDto = new PlayerColorDTO
             {
-                Color = (PlayerColor)colorIterator.CurrentItem()
+                Color = (PlayerColor)colorIterator.Next()
             };
-            await Clients.Others.PlayerChangeColor(Context.ConnectionId, colorDto);
+            await Clients.All.PlayerChangeColor(player.ID, colorDto);
+        }
+
+        private IIterator GetPlayerColorIterator(string playerId)
+        {
+            if (!_playerColorIterators.ContainsKey(playerId))
+            {
+                var player = _managerFacade.GetPlayer(playerId);
+                _playerColorIterators.Add(playerId, player.ColorPalette.GetIterator());
+            }
+
+            return _playerColorIterators[playerId];
         }
 
         private void SendNotification(string title, string message)
