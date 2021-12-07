@@ -1,6 +1,7 @@
 using BoomermanServer.Data;
 using BoomermanServer.Patterns.Iterator;
 using BoomermanServer.Patterns.Memento;
+using BoomermanServer.Patterns.Mediator;
 
 namespace BoomermanServer.Game
 {
@@ -16,6 +17,8 @@ namespace BoomermanServer.Game
         public bool IsImmortal { get; set; }
         public int _score;
         public ColorPalette ColorPalette { get; set; }
+
+        public IChatroom Chatroom { get; set; }
 
         public Player(string id, Position position)
         {

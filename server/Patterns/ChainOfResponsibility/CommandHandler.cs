@@ -56,7 +56,5 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
 
 			return base.Handle(message);
 		}
-
-
 	}
 }
