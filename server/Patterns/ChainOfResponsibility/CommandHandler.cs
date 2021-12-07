@@ -30,6 +30,17 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
 
                 return message;
             });
+
+            commands.Add("msg", (args, message) =>
+            {
+                var from = playerManager.GetPlayer(message.PlayerID);
+                var to = playerManager.GetPlayers().FirstOrDefault(p => p.Name == args[0]);
+                if(from != null && to != null)
+                {
+                    message.Text = from.Send(to.Name, message.Text);
+                }
+                return message;
+            });
         }
 		public override Message Handle(Message message)
 		{

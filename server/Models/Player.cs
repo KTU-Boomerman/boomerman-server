@@ -32,6 +32,11 @@ namespace BoomermanServer.Game
             ColorPalette = new ColorPalette();
         }
 
+        public string Send(string to, string message)
+        {
+            return Chatroom.Send(Name, to, message);
+        }
+
         public int Lives
         {
             get { return _lives; }

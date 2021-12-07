@@ -16,13 +16,14 @@ namespace BoomermanServer.Patterns.Mediator
             player.Chatroom = this;
         }
 
-        public void Send(string from, string to, string message)
+        public string Send(string from, string to, string message)
         {
             var participant = participants[to];
             if(participant != null)
             {
-                // TODO: Add direct message logic here
+                return $"{from}@{to} writes {message}";
             }
+            return message;
         }
     }
 }
