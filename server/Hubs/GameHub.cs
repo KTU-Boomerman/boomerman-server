@@ -8,10 +8,10 @@ using BoomermanServer.Models;
 using BoomermanServer.Models.Bombs;
 using BoomermanServer.Patterns.Adapter;
 using BoomermanServer.Patterns.ChainOfResponsibility;
-using BoomermanServer.Patterns.Command;
 using BoomermanServer.Patterns.Decorator;
 using BoomermanServer.Patterns.Facade;
 using BoomermanServer.Patterns.Iterator;
+using BoomermanServer.Patterns.Mediator;
 using BoomermanServer.Patterns.Strategy;
 using BoomermanServer.Patterns.Template;
 using Microsoft.AspNetCore.SignalR;
@@ -47,6 +47,8 @@ namespace BoomermanServer.Hubs
         private ChatHandler _chatHandler;
 
         private static Dictionary<string, IIterator> _playerColorIterators = new Dictionary<string, IIterator>();
+        private static IChatroom _chatroom = new Chatroom();
+
         private IIterator _playerColorIterator;
 
         public GameHub(IGameManager gameManager, IPlayerManager playerManager, IExplosionQueue explosionQueue, MapManager mapManager, BombManager bombManager)
@@ -85,6 +87,8 @@ namespace BoomermanServer.Hubs
         {
             var playerDto = _managerFacade.AddPlayer(Context.ConnectionId).ToDTO();
             await Clients.Others.PlayerJoin(playerDto);
+
+            _chatroom.Register(_managerFacade.GetPlayer(playerDto.ID));
 
             var playersDto = _managerFacade
                 .GetPlayers()
@@ -238,7 +242,7 @@ namespace BoomermanServer.Hubs
                 Text = text,
             };
             var handledMessage = _chatHandler.Handle(message);
-            await Clients.All.SendMessage(player.ID, player.Name, handledMessage.Text);
+            await Clients.All.SendMessage(player.ID, message.PlayerName, handledMessage.Text);
         }
 
         public async Task PlayerUnwind()

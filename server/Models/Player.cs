@@ -1,6 +1,7 @@
 using BoomermanServer.Data;
 using BoomermanServer.Patterns.Iterator;
 using BoomermanServer.Patterns.Memento;
+using BoomermanServer.Patterns.Mediator;
 
 namespace BoomermanServer.Game
 {
@@ -17,6 +18,8 @@ namespace BoomermanServer.Game
         public int _score;
         public ColorPalette ColorPalette { get; set; }
 
+        public IChatroom Chatroom { get; set; }
+
         public Player(string id, Position position)
         {
             ID = id;
@@ -27,6 +30,11 @@ namespace BoomermanServer.Game
             MaxBombCount = 1;
             Score = 0;
             ColorPalette = new ColorPalette();
+        }
+
+        public string Send(string to, string message)
+        {
+            return Chatroom.Send(Name, to, message);
         }
 
         public int Lives

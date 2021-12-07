@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BoomermanServer.Game;
 
 namespace BoomermanServer.Patterns.ChainOfResponsibility
 {
-	public class PlayerNameHandler : AbstractChatHandler
+    public class PlayerNameHandler : AbstractChatHandler
 	{
         private IPlayerManager _playerManager;
 		public PlayerNameHandler(IPlayerManager playerManager) : base() 

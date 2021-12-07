@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BoomermanServer.Patterns.ChainOfResponsibility
 {
-	public class EmojiHandler : AbstractChatHandler
+    public class EmojiHandler : AbstractChatHandler
 	{
         Dictionary<string, string> emoticons = new Dictionary<string, string>{ 
             {":)", "😃"}, 

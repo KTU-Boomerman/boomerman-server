@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BoomermanServer.Game;
 
 namespace BoomermanServer.Patterns.ChainOfResponsibility
 {
-	public class CommandHandler : AbstractChatHandler
+    public class CommandHandler : AbstractChatHandler
 	{
         Dictionary<string, Func<string[], Message, Message>> commands;
 
@@ -29,6 +28,19 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
                 playerManager.GetPlayer(message.PlayerID).Name = newName;
                 message.PlayerName = newName;
 
+                return message;
+            });
+
+            commands.Add("msg", (args, message) =>
+            {
+                var from = playerManager.GetPlayer(message.PlayerID);
+                var to = playerManager.GetPlayers().FirstOrDefault(p => p.Name == args[0]);
+                if(from != null && to != null && args.Length > 1)
+                {
+                    message.PlayerID = "Server";
+                    message.PlayerName = "Server";
+                    message.Text = from.Send(to.ID, string.Join(" ", args.Skip(1)));
+                }
                 return message;
             });
         }
@@ -57,7 +69,5 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
 
 			return base.Handle(message);
 		}
-
-
 	}
 }

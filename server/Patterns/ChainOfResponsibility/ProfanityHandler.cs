@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BoomermanServer.Patterns.ChainOfResponsibility
 {
-	public class ProfanityHandler : AbstractChatHandler
+    public class ProfanityHandler : AbstractChatHandler
 	{
 		private static readonly string[] BadWords = new[]
 				{
