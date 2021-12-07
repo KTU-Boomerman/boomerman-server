@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BoomermanServer.Game;
 
 namespace BoomermanServer.Patterns.ChainOfResponsibility
 {
-	public class CommandHandler : AbstractChatHandler
+    public class CommandHandler : AbstractChatHandler
 	{
         Dictionary<string, Func<string[], Message, Message>> commands;
 
