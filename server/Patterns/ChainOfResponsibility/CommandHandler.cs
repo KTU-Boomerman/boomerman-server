@@ -52,20 +52,16 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
             if (message.Text.StartsWith("/"))
             {
                 var text = message.Text.Substring(1);
-                var parts = text.Split(' ', 2);
+                var parts = text.Split(' ');
 
                 var command = "";
-                var args = "";
+                var args = parts.Skip(1).ToList();
 
                 if (parts.Length > 0)
                 {
                     command = parts[0];
                 }
-                if (parts.Length > 1)
-                {
-                    args = parts[1];
-                }
-                
+
                 var interpreter = new CommandExpression(
                     new AttributeExpression(new ValueExpression(args), command));
 

@@ -1,4 +1,6 @@
-﻿using BoomermanServer.Game;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BoomermanServer.Game;
 using BoomermanServer.Patterns.ChainOfResponsibility;
 
 namespace BoomermanServer.Patterns.Interpreter
@@ -8,7 +10,7 @@ namespace BoomermanServer.Patterns.Interpreter
         private IPlayerManager _playerManager;
         private Message _message;
         public bool IsCommand { get; set; }
-        public string Value { get; set; }
+        public List<string> Value { get; set; }
         public string Command { get; set; }
 
         public MessageContext(IPlayerManager playerManager, Message message)
@@ -25,11 +27,30 @@ namespace BoomermanServer.Patterns.Interpreter
             switch (Command)
             {
                 case "name" :
-                    _playerManager.GetPlayer(_message.PlayerID).Name = Value;
+                    var newName = string.Join(' ', Value);
+                    _playerManager.GetPlayer(_message.PlayerID).Name = newName;
                     message.PlayerName = "Server";
                     message.PlayerID = "Server";
-                    message.Text = $"{_message.PlayerName} name is set to {Value}";
+                    message.Text = $"{_message.PlayerName} name is set to {newName}";
                     return message;
+                case "msg" :
+                    var from = _playerManager.GetPlayer(_message.PlayerID);
+                    var to = _playerManager.GetPlayers().FirstOrDefault(p => p.Name == Value[0]);
+                    if(from != null && to != null && Value.Count > 1)
+                    {
+                        message.PlayerID = "Server";
+                        message.PlayerName = "Server";
+                        message.Text = from.Send(to.ID, string.Join(" ", Value.Skip(1)));
+                        return message;
+                    }
+                    else
+                    {
+                        message.PlayerID = "Server";
+                        message.PlayerName = "Server";
+                        message.Text = "Invalid direct message";
+                        return message;
+                    }
+                    
                 default:
                     message.PlayerName = "Server";
                     message.PlayerID = "Server";

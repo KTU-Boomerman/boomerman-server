@@ -1,16 +1,16 @@
-﻿using BoomermanServer.Patterns.ChainOfResponsibility;
+﻿using System.Collections.Generic;
+using BoomermanServer.Patterns.ChainOfResponsibility;
 
 namespace BoomermanServer.Patterns.Interpreter
 {
     public class ValueExpression : Expression
     {
-        private string _value;
+        private List<string> _value;
 
-        public ValueExpression(string value)
+        public ValueExpression(List<string> value)
         {
             _value = value;
         }
-
 
         public Message interpret(MessageContext messageContext)
         {
