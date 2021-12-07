@@ -21,7 +21,7 @@ namespace BoomermanServer.Patterns.Mediator
             var participant = participants[to];
             if(participant != null)
             {
-                return $"{from}@{to} writes {message}";
+                return $"{from}@{participant.Name} writes {message}";
             }
             return message;
         }

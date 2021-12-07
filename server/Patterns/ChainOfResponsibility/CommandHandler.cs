@@ -35,9 +35,11 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
             {
                 var from = playerManager.GetPlayer(message.PlayerID);
                 var to = playerManager.GetPlayers().FirstOrDefault(p => p.Name == args[0]);
-                if(from != null && to != null)
+                if(from != null && to != null && args.Length > 1)
                 {
-                    message.Text = from.Send(to.Name, message.Text);
+                    message.PlayerID = "Server";
+                    message.PlayerName = "Server";
+                    message.Text = from.Send(to.ID, string.Join(" ", args.Skip(1)));
                 }
                 return message;
             });
