@@ -1,9 +1,10 @@
 using BoomermanServer.Data;
 using BoomermanServer.Patterns.Iterator;
+using BoomermanServer.Patterns.Memento;
 
 namespace BoomermanServer.Game
 {
-    public class Player : IDataTransferable<PlayerDTO>
+    public class Player : IDataTransferable<PlayerDTO>, IOriginator<PlayerDTO>
     {
         private int _lives;
         public string ID { get; private set; }
@@ -61,8 +62,22 @@ namespace BoomermanServer.Game
             return new PlayerDTO()
             {
                 ID = this.ID,
-                Position = this.Position.ToDTO()
+                Position = this.Position.ToDTO(),
+                Color = (PlayerColor)this.ColorPalette.GetIterator().CurrentItem(),
+                Lives = this.Lives,
             };
         }
-    }
+
+		public IMemento GetState()
+		{
+			return new PlayerMemento(this, this.ToDTO());
+		}
+
+        public void Restore(PlayerDTO state)
+        {
+            this.ID = state.ID;
+            this.Position = new Position(state.Position);
+            this._lives = state.Lives;
+        }
+	}
 }

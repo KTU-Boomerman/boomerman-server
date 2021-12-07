@@ -240,5 +240,20 @@ namespace BoomermanServer.Hubs
             var handledMessage = _chatHandler.Handle(message);
             await Clients.All.SendMessage(player.ID, player.Name, handledMessage.Text);
         }
+
+        public async Task PlayerUnwind()
+        {
+            var player = _managerFacade.GetPlayer(Context.ConnectionId);
+            
+            Console.WriteLine($"Player {player.Name} has unwinded");
+
+            if (player.Lives > 0)
+            {
+                _managerFacade.RestorePlayer(player.ID);
+
+                var updatedPlayer = _managerFacade.GetPlayer(player.ID);
+                await Clients.All.UnwindPlayer(updatedPlayer.ID, updatedPlayer.ToDTO());
+            }
+        }
     }
 }

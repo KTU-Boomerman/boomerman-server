@@ -21,5 +21,6 @@ namespace BoomermanServer.Hubs
         Task RemovePowerup(Position getPosition);
         Task PlayerChangeColor(string playerId, PlayerColorDTO colorDto);
         Task SendMessage(string playerId, string playerName, string message);
+        Task UnwindPlayer(string playerId, PlayerDTO playerDto);
     }
 }
