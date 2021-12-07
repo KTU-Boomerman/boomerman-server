@@ -242,7 +242,7 @@ namespace BoomermanServer.Hubs
                 Text = text,
             };
             var handledMessage = _chatHandler.Handle(message);
-            await Clients.All.SendMessage(player.ID, message.PlayerName, handledMessage.Text);
+            await Clients.All.SendMessage(player.ID, handledMessage.PlayerName, handledMessage.Text);
         }
 
         public async Task PlayerUnwind()

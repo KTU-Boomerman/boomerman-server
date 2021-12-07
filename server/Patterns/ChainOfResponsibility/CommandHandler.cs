@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BoomermanServer.Game;
+using BoomermanServer.Patterns.Interpreter;
 
 namespace BoomermanServer.Patterns.ChainOfResponsibility
 {
     public class CommandHandler : AbstractChatHandler
 	{
         Dictionary<string, Func<string[], Message, Message>> commands;
+        private IPlayerManager _playerManager;
 
-        public CommandHandler(IPlayerManager playerManager) : base()
+        public CommandHandler(IPlayerManager playerManager)
         {
+            _playerManager = playerManager;
             commands = new Dictionary<string, Func<string[], Message, Message>>();
             
             commands.Add("help", (args, message) =>
@@ -25,7 +28,7 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
             commands.Add("name", (args, message) =>
             {
                 var newName = args[0];                
-                playerManager.GetPlayer(message.PlayerID).Name = newName;
+                _playerManager.GetPlayer(message.PlayerID).Name = newName;
                 message.PlayerName = newName;
 
                 return message;
@@ -49,22 +52,24 @@ namespace BoomermanServer.Patterns.ChainOfResponsibility
             if (message.Text.StartsWith("/"))
             {
                 var text = message.Text.Substring(1);
-                var parts = text.Split(' ');
+                var parts = text.Split(' ', 2);
 
-                var command = parts[0];
-                var args = parts.Skip(1).ToArray();
+                var command = "";
+                var args = "";
 
-                if (commands.ContainsKey(command)) {
-                    return commands[command](args, message);
-                }
-                else
+                if (parts.Length > 0)
                 {
-                    return new Message {
-                        PlayerID = "Server",
-                        PlayerName = "Server",
-                        Text = "Unknown command: " + command
-                    };
+                    command = parts[0];
                 }
+                if (parts.Length > 1)
+                {
+                    args = parts[1];
+                }
+                
+                var interpreter = new CommandExpression(
+                    new AttributeExpression(new ValueExpression(args), command));
+
+                return interpreter.interpret(new MessageContext(_playerManager, message));
             }
 
 			return base.Handle(message);
