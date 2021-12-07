@@ -22,6 +22,8 @@ namespace BoomermanServer.Game
 
         private List<Explosion> _activeExplosions;
 
+        private TimeSpan _mementoTimer;
+
         public GameLoop(IHubContext<GameHub, IGameHub> gameHub, MapManager mapManager, IPlayerManager playerManager, PowerupManager powerupManager, IExplosionQueue explosionQueue, BombManager bombManager)
         {
             _gameHub = gameHub;
@@ -32,6 +34,7 @@ namespace BoomermanServer.Game
             _bombManager = bombManager;
 
             _activeExplosions = new List<Explosion>();
+            _mementoTimer = TimeSpan.FromSeconds(5) + DateTime.Now.TimeOfDay;
         }
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,6 +50,12 @@ namespace BoomermanServer.Game
                 }
 
                 _activeExplosions.RemoveAll(e => e.Exploded);
+
+                if (_mementoTimer < DateTime.Now.TimeOfDay)
+                {
+                    _playerManager.SaveMemento();
+                    _mementoTimer = TimeSpan.FromSeconds(5) + DateTime.Now.TimeOfDay;
+                }
 
                 await ProcessPlayers(_activeExplosions);
                 await ProcessExplosions(explosions);

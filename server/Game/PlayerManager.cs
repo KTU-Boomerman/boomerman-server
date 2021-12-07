@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BoomermanServer.Patterns.Memento;
 
 namespace BoomermanServer.Game
 {
@@ -13,23 +14,27 @@ namespace BoomermanServer.Game
             new Position(32, 352),
             new Position(480, 352),
         };
-        public Dictionary<string, Player> Players { get; set; }
+        private Dictionary<string, Player> _players;
+        private Dictionary<string, UnwindCaretaker> _caretakers;
+        
         public PlayerManager()
         {
-            Players = new Dictionary<string, Player>();
+            _players = new Dictionary<string, Player>();
+            _caretakers = new Dictionary<string, UnwindCaretaker>();
         }
 
         public Player AddPlayer(string id)
         {
-            lock(Players) {
-                if (Players.ContainsKey(id)) {
-                    return Players[id];
+            lock(_players) {
+                if (_players.ContainsKey(id)) {
+                    return _players[id];
                 }
 
-                Position spawnPoint = getRandomSpawnPoint();
+                Position spawnPoint = GetRandomSpawnPoint();
                 Player player = new Player(id, spawnPoint);
 
-                Players.Add(id, player);
+                _players.Add(id, player);
+                _caretakers.Add(id, new UnwindCaretaker());
             
                 return player;
             }
@@ -37,37 +42,59 @@ namespace BoomermanServer.Game
 
         public Player GetPlayer(string id)
         {
-            return Players[id];
+            return _players[id];
         }
 
         public void RemovePlayer(string id)
         {
-            lock(Players) {
-                Players.Remove(id);
+            lock(_players) {
+                _players.Remove(id);
+                _caretakers.Remove(id);
             }
         }
 
         public void MovePlayer(string id, Position position)
         {
-            Player player = Players[id];
+            Player player = _players[id];
             player.Position = position;
         }
 
         public int GetPlayerCount()
         {
-            return Players.Count;
+            return _players.Count;
         }
 
         public List<Player> GetPlayers()
         {
-            return Players.Values.ToList();
+            return _players.Values.ToList();
         }
 
-        private Position getRandomSpawnPoint()
+        private Position GetRandomSpawnPoint()
         {
             int spawnPointIndex = new Random().Next(_spawnPoints.Length);
             Position spawnPoint = _spawnPoints[spawnPointIndex];
             return spawnPoint;
         }
-    }
+
+        public void RestorePlayer(string id)
+        {
+            UnwindCaretaker caretaker = _caretakers[id];
+            caretaker.Undo();
+        }
+
+        public void SavePlayer(string id)
+        {
+            Player player = _players[id];
+            UnwindCaretaker caretaker = _caretakers[id];
+            caretaker.Save(player.GetState());
+        }
+
+		public void SaveMemento()
+		{
+			foreach (var player in _players)
+            {
+                SavePlayer(player.Key);
+            }
+		}
+	}
 }

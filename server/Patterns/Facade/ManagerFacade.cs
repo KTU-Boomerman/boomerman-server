@@ -30,6 +30,8 @@ namespace BoomermanServer.Patterns.Facade
 
         public List<Player> GetPlayers() => _playerManager.GetPlayers();
 
+        public  void RestorePlayer(string id) => _playerManager.RestorePlayer(id);
+
         public int GetMinPlayers() => _gameManager.GetMinPlayers();
 
         public void StartGame() => _gameManager.StartGame();
